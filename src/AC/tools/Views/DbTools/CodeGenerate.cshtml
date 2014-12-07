@@ -1,0 +1,345 @@
+﻿@{
+    ViewBag.Title = "代码生成器";
+}
+@{
+    var lstDbServers = ViewData["DbServers"] as IList<string>;
+    string serverName = ViewData["DbServer"].ToString();
+    string dbName = ViewData["DbName"].ToString();
+    string dbNameSource = ViewData["DbNameSource"].ToString();
+    string dbTableSource = ViewData["DbTableSource"].ToString();
+}
+@section HeadSection
+{
+    <link href="@Url.Content("~/Content/prettify.css")" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/prettify.js")"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(window).prettyPrint && prettyPrint();
+            var dbName = "@dbName";
+            if (dbName == "") {
+                $("#txtDbName").focus();
+            } else {
+                $("#txtTableName").focus();
+            }
+            $("#dbServer").on("change", dbServerChanged);
+            $("#txtDbName").on("keydown", dbNameKeydown);
+            $("#txtTableName").on("keydown", tableNameKeydown);
+            $("#txtServiceName").keydown(function () {
+                serviceNameChanged();
+            });
+            $("#txtSubNamespace").keydown(function () {
+                serviceNameChanged();
+            });
+            $("#btnCodeGenerate").click(function() {
+                GetServiceMethodsConfig();
+            });
+            
+            $("#dgvSettings").jqGrid({
+                datatype: "json",
+                colNames: ["序号", "列名", "类型", "长度", "小数", "标识", "主键", "允许空", "默认值", "描述"],
+                colModel: [
+                    { name: "Colorder", index: "Colorder", width: 40 },
+                    { name: "ColumnName", index: "ColumnName", width: 120 },
+                    { name: "TypeName", index: "TypeName", width: 80 },
+                    { name: "Length", index: "Length", width: 40 },
+                    { name: "Scale", index: "Scale", width: 40 },
+                    { name: "IsIdentity", index: "IsIdentity", width: 40 },
+                    { name: "IsPK", index: "IsPK", width: 40 },
+                    { name: "cisNull", index: "cisNull", width: 60 },
+                    { name: "DefaultVal", index: "DefaultVal", width: 60 },
+                    { name: "DeText", index: "DeText", width: 120 }
+                ],
+                rowNum: 120,
+                sortname: "Colorder",
+                viewrecords: true,
+                multiselect: true,
+                caption: "数据列表"
+            });
+        });
+
+        function dbServerChanged() {
+            $("#txtDbName").val("");
+            $("#txtTableName").val("");
+            $("#dbSelector").submit();
+        }
+
+        function dbNameKeydown() {
+            if (event.keyCode != 13) {
+                return;
+            }
+            var dbName = $("#txtDbName").val();
+            if (dbName == "") {
+                $("#txtDbName").focus();
+                return;
+            }
+            $("#txtTableName").val("");
+            $("#dbSelector").submit();
+        }
+        function ServiceNameKeydown() {
+            if(event.keyCode!=13) {
+                return;
+            }
+        }
+
+        function GetServiceMethodsConfig() {
+            var isCreate = $("#chkCreate").prop("checked");
+            var isModify = $("#chkModify").prop("checked");
+            var isRemove = $("#chkRemove").prop("checked");
+            var isGetById = $("#chkGetById").prop("checked");
+            var isQuery = $("#chkQuery").prop("checked");
+            return {
+                CreateMethodNeeded: isCreate,
+                ModifyMethodNeeded: isModify,
+                RemoveMethodNeeded: isRemove,
+                GetByIdMethodNeeded: isGetById,
+                QueryMethodNeeded: isQuery
+            };
+        }
+
+        function serviceNameChanged() {
+            if (event.keyCode != 13) {
+                return;
+            }
+            var params = {
+                ServiceName: $("#txtServiceName").val(),
+                SubNamespace: $("#txtSubNamespace").val(),
+                IsCustomNamespace: $("#chk").prop("checked")
+            };
+            $.post(
+                "/DbTools/GetServiceNameInfo",
+                params,
+                function(data) {
+                    if (!data.IsSuccess) {
+                        alert(data.Error);
+                        return;
+                    }
+
+                    $("#txtServiceName").val(data.Names.ServiceName);
+                    $("#txtService").text(data.Names.ServiceFullName);
+                    $("#txtServiceDTO").text(data.Names.ServiceDTOFullName);
+                    $("#txtServiceImpl").text(data.Names.ServiceImplFullName);
+                    $("#txtDomain").text(data.Names.DomainFullName);
+                    $("#txtDao").text(data.Names.DaoFullName);
+                }
+            );
+        }
+        function tableNameKeydown() {
+            if (event.keyCode != 13) {
+                return;
+            }
+            var params = {
+                DbServer: $("#dbServer").val(),
+                DbName: $("#txtDbName").val(),
+                TableName: $("#txtTableName").val()
+            };
+            $.post(
+                "/DbTools/GetColumnInfo",
+                params,
+                function (data) {
+                    $("#dgvSettings").jqGrid("clearGridData");
+                    if (!data.IsSuccess) {
+                        alert(data.Error);
+                        return;
+                    }
+
+                    for (var i = 0; i < data.Rows.length; i++) {
+                        $("#dgvSettings").jqGrid("addRowData", data.Rows[i].Colorder, data.Rows[i]);
+                    }
+
+                    $("#txtServiceName").val(data.Names.ServiceName);
+                    $("#txtService").text(data.Names.ServiceFullName);
+                    $("#txtServiceDTO").text(data.Names.ServiceDTOFullName);
+                    $("#txtServiceImpl").text(data.Names.ServiceImplFullName);
+                    $("#txtDomain").text(data.Names.DomainFullName);
+                    $("#txtDao").text(data.Names.DaoFullName);
+                }
+            );
+        }
+        function tableNameKeydown1() {
+            if (event.keyCode != 13) {
+                return;
+            }
+            var dbTableName = $("#txtTableName").val();
+            if (dbTableName == "") {
+                $("#txtTableName").focus();
+                return;
+            }
+            var params = { dbServer: $("#dbServer").val(), dbName: $("#txtDbName").val(), tableName: $("#txtTableName").val() };
+            $.post(
+                "/DbTools/GenerateCode",
+                params,
+                function (data) {
+                    $("#dgvSettings").jqGrid("clearGridData");
+                    if (data.IsSuccess) {
+                        $("#codeOfServiceDTO").text(data.ServiceDTOCode);
+                        $("#codeOfService").text(data.ServiceCode);
+                        $("#codeOfServiceImpl").text(data.ServiceImplCode);
+                        $("#codeOfDomain").text(data.DomainCode);
+                        $("#codeOfDao").text(data.DaoCode);
+
+                        for (var i = 0; i < data.Rows.length; i++) {
+                            $("#dgvSettings").jqGrid("addRowData", data.Rows[i].Colorder, data.Rows[i]);
+                        }
+
+                        $("#txtServiceName").val(data.Names.ServiceName);
+                        $("#txtService").text(data.Names.ServiceFullName);
+                        $("#txtServiceDTO").text(data.Names.ServiceDTOFullName);
+                        $("#txtServiceImpl").text(data.Names.ServiceImplFullName);
+                        $("#txtDomain").text(data.Names.DomainFullName);
+                        $("#txtDao").text(data.Names.DaoFullName);
+                    }
+                }
+            );
+        }
+    </script>
+}
+<div class="row">
+    <div class="well span3">
+        <form id="dbSelector" method="POST">
+            <legend>配置条件</legend>
+            <span class="hide alert-error" id="txtError"></span>
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="dbServer">选择服务器</label>
+                    <div class="controls">
+                        <div class="input-prepend">
+                            <span class="add-on"><i class="icon-search"></i></span>
+                            <select id="dbServer" name="dbServer">
+                                @foreach (string dbServer in lstDbServers)
+                                {
+                                    <option @(dbServer == serverName ? @Html.Raw("selected='selected'").ToString() : string.Empty)>@dbServer</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="txtDbName" class="control-label">选择数据库</label>
+                    <div class="controls">
+                        <div class="input-append" id="divtest">
+                            <span class="add-on"><i class="icon-search"></i></span>
+                            <input type="text" id="txtDbName" name="dbName" value="@dbName" data-provide="typeahead" data-items="100" data-source="@dbNameSource"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="txtTableName" class="control-label">选择数据表</label>
+                    <div class="controls">
+                        <div class="input-append">
+                            <span class="add-on"><i class="icon-search"></i></span>
+                            <input type="text" id="txtTableName"  data-provide="typeahead" data-items="50" data-source="@dbTableSource"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+        
+    <div class="tabbable span8">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tabSettings" data-toggle="tab">生成配置</a></li>
+            <li><a href="#tabServiceDTO" data-toggle="tab">ServiceDTO</a></li>
+            <li><a href="#tabService" data-toggle="tab">Service</a></li>
+            <li><a href="#tabServiceImpl" data-toggle="tab">ServiceImpl</a></li>
+            <li><a href="#tabDomain" data-toggle="tab">Domain</a></li>
+            <li><a href="#tabDao" data-toggle="tab">Dao</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tabSettings">
+                <table id="dgvSettings"></table>
+                <form class="form-horizontal">
+                    <legend>参数</legend>
+                    <div class="form-actions">
+                            <input id="btnCodeGenerate" type="button" class="btn btn-large" value="生成代码"/>
+                        </div>
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label">ServiceName:</label>
+                            <div class="controls">
+                                <input type="text" id="txtServiceName"/>
+                                <span class="help-inline alert-info">更改完成后回车</span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">SubNamespace:</label>
+                            <div class="controls">
+                                <input type="text" id="txtSubNamespace"/>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" id="chk">自定义命名空间
+                                </label>
+                                <span class="help-inline alert-info">更改完成后回车</span>
+                            </div>
+                        </div>
+                        <div  class="control-group">
+                            <label class="control-label">Methods Select:</label>
+                            <div class="controls">
+                                <label class="checkbox inline">
+                                    <input type="checkbox" id="chkCreate" value="Create" checked="checked"> Create
+                                </label>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" id="chkModify" value="Modify" checked="checked"> Modify
+                                </label>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" id="chkRemove" value="Modify" checked="checked"> Remove
+                                </label>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" id="chkGetById" value="Modify" checked="checked"> GetById
+                                </label>
+                                <label class="checkbox inline">
+                                    <input type="checkbox" id="chkQuery" value="Modify" checked="checked"> Query
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Service:</label>
+                            <div class="controls">
+                                <span id="txtService" class="input-large uneditable-input span5"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">ServiceDTO:</label>
+                            <div class="controls">
+                                <span id="txtServiceDTO" class="input-large uneditable-input span5"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">ServiceImpl:</label>
+                            <div class="controls">
+                                <span id="txtServiceImpl" class="input-large uneditable-input span5"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Domain:</label>
+                            <div class="controls">
+                                <span id="txtDomain" class="input-large uneditable-input span5"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label">Dao:</label>
+                            <div class="controls">
+                                <span id="txtDao" class="input-large uneditable-input span5"></span>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="tab-pane" id="tabServiceDTO">
+                <pre class="prettyprint linenums" id="codeOfServiceDTO"></pre>
+            </div>
+            <div class="tab-pane" id="tabService">
+                <pre class="prettyprint linenums" id="codeOfService"></pre>
+            </div>
+            <div class="tab-pane" id="tabServiceImpl">
+                <pre class="prettyprint linenums" id="codeOfServiceImpl"></pre>
+            </div>
+             <div class="tab-pane" id="tabDomain">
+                <pre class="prettyprint linenums" id="codeOfDomain"></pre>
+            </div>
+            <div class="tab-pane" id="tabDao">
+                <pre class="prettyprint linenums" id="codeOfDao"></pre>
+            </div>
+        </div>
+    </div>
+</div>

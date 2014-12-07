@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "MD5加解密";
+}
+<form>
+    <legend>MD5加密工具</legend>
+    <label>请输入要加密的字符串：</label>
+    <textarea id="txtSource" name="txtSource" rows="5" class="span12"></textarea><label id="lblError" class="alert-error"></label>
+    <div class="form-actions">
+        <button id="btnEncrypt" type="button" class="btn btn-primary btn-inverse" value="加密">加密</button>
+    </div>
+    <textarea id="txtTarget" name="txtTarget" rows="5" class="span12"></textarea>
+</form>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnEncrypt").bind("click", Encrypt);
+        $("#lblError").hide();
+        $("#txtSource").focus();
+    });
+    function SourceIsNullOrEmpty() {
+        var txtSource = $("#txtSource").val();
+        if (txtSource == '') {
+            $("#lblError").text("请输入要加密的字符串.");
+            $("#lblError").show();
+            $("#txtSource").focus();
+            return false;
+        }
+        else {
+            $("#lblError").hide();
+            return true;
+        }
+    }
+    function Encrypt() {
+        if (!SourceIsNullOrEmpty()) {
+            return false;
+        }
+
+        $.post(
+            "/CommonTools/DESAndMd5",
+            { type: "MD5", txtSource: $("#txtSource").val() },
+            function (data) {
+                if (data != null) {
+                    $("#txtTarget").val(data);
+                }
+            }
+        );
+        return true;
+    }
+</script>

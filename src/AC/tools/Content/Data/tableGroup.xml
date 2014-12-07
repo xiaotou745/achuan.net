@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TableGroups>
+  <TableGroup GroupName="炫吧表结构">
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="Forums" TableDes="论坛板块表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="Topics" TableDes="主题表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="Posts" TableDes="帖子表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="Attachments" TableDes="附件表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="UserFields" TableDes="用户信息表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="MyTopics" TableDes="我的主题"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="MyPosts" TableDes="我的帖子"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="MyAttachments" TableDes="我的附件"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="MyAttentions" TableDes="我的关注/收藏"></Table>
+    <Table DbServer="192.168.99.242" DbName="dzbbs" TableName="MyFavorites" TableDes="我的喜欢/赞"></Table>
+  </TableGroup>
+  <TableGroup GroupName="定制平台前台用户相关表">
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="customer" TableDes="前台用户表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="customer_address_book" TableDes="请知道的同学填写啊"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="customer_comment" TableDes="请知道的同学填写啊"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="customer_design" TableDes="请知道的同学填写啊"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="customer_design_detail" TableDes="请知道的同学填写啊"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="customer_invoice" TableDes="请知道的同学填写啊"></Table>
+  </TableGroup>
+  <TableGroup GroupName="Discuz!NT表结构">
+    <Table DbServer="192.168.99.242" DbName="dnt_dz" TableName="dnt_users" TableDes="论坛用户表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dnt_dz" TableName="dnt_pms" TableDes="短消息表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dnt_dz" TableName="dnt_notices" TableDes="通知信息表"></Table>
+  </TableGroup>
+  <TableGroup GroupName="定制平台商家后台">
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="material" TableDes="材料表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="material_craft" TableDes="材料支持工艺表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="material_craft_colours" TableDes="材料工艺支持颜色表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="vraymaps" TableDes="贴图图库表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_serial" TableDes="模型款式表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_info" TableDes="模型表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_property" TableDes="模型属性表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_size" TableDes="模型尺码表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_component" TableDes="模型组件信息表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="craft_component" TableDes="模型组件签名信息表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_component_material" TableDes="模型组件材料信息表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="painting_component" TableDes="模型组件喷绘信息表"></Table>
+  </TableGroup>
+  <TableGroup GroupName="基础信息表">
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="category" TableDes="类目表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="product_material" TableDes="商家材料表（云板房）"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="product_def" TableDes="材料质感(def)表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="prod_collect" TableDes="商家收藏材料表？"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="prod_colour" TableDes="材料色彩基础信息表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="size_info" TableDes="尺码基础表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_group" TableDes="模型分组表（云板房允许对模型自定义分组）"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_group_detail" TableDes="分组明细表（分组ID与模型ID关系）"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="supplier_user" TableDes="商家用户表，商家后台登录账号表(手机号和密码MD5加密)"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="supplier_module" TableDes="商家权限表，商家后台权限通过此表控制"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="customer_design" TableDes="定制表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz_d_plan" TableName="model_inside" TableDes="模型内里表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz" TableName="model_self_defined_component" TableDes="自定义部件信息"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz" TableName="part_category_relation" TableDes="主模型分类对应部件组"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz" TableName="customer_design_detail" TableDes="定制子表"></Table>
+    <Table DbServer="192.168.99.242" DbName="dz" TableName="supplier_info" TableDes="供应商"></Table>
+  </TableGroup>
+</TableGroups>

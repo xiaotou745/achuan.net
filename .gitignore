@@ -2,8 +2,16 @@
 *.suo
 *.bak
 
+#=============ac.core ignore
 src/AC/AC.Core/bin/
 src/AC/AC.Core/obj/
 
+#=============ac.data ignore
 src/AC/AC.Data/bin/
 src/AC/AC.Data/obj/
+
+#=============tools ignore
+src/AC/tools/bin/
+src/AC/tools/obj/
+src/AC/tools.Tests/bin/
+src/AC/tools.Tests/obj/

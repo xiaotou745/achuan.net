@@ -1,0 +1,345 @@
+﻿@using AC.Code.Config
+@using AC.Tools.Service
+@using DZ.ToolWeb.Service
+@using AC.Util
+@model dynamic
+
+@{
+    ViewBag.Title = "查看表分组信息";
+    var groupName = ViewData["groupName"] as string;
+    var groupInfo = ViewData["groupInfo"] as TableGroupInfo;
+
+    var lstCodeLayerDesc = ViewData["lstCodeLayerDesc"] as IList<KeyValuePair<string, string>>;
+    var lstDaoStyleDesc = ViewData["lstDaoStyleDesc"] as IList<KeyValuePair<string, string>>;
+    var lstCallStyleDesc = ViewData["lstCallStyleDesc"] as IList<KeyValuePair<string, string>>;
+}
+@section HeadSection
+{
+    <link href="@Url.Content("~/Content/prettify.css")" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/prettify.js")"></script>
+    <script type="text/javascript">
+        $(function() {
+            $(window).prettyPrint && prettyPrint();
+
+            $("#ddlCallStyle,#ddlCodeLayer,#ddlDaoStyle").change(function() {
+                var title = $(this).find("option:selected").attr("title");
+                $(this).next("p").text(title);
+            });
+            $("#ddlCodeLayer").change();
+            $("#ddlCallStyle").change();
+            $("#ddlDaoStyle").change();
+
+            $("#btnGenerateCode").on("click", function() {
+                generateCode();
+            });
+
+            $("#btnGenerateCodeAndDownload").on("click", function() {
+                generateCodeAndDownload();
+            });
+
+            $("#tabResult > ul li").addClass("hide");
+        });
+
+        //绑定表的详细信息
+
+        function getTableInfo(dbServer, dbName, tableName, tableDesc) {
+            $.blockUI();
+            $.post("/TableView/GetHtmlTableInfo",
+                { dbServer: dbServer, dbName: dbName, dbTable: tableName },
+                function(data) {
+                    setTableInfo(dbServer, dbName, tableName, tableDesc);
+                    $("#tdTableInfo").show();
+
+                    $("#tabResult > ul li").removeClass("active");
+                    $("#tabResult > .tab-content > div").removeClass("active");
+                    $("#liColumnInfo").addClass("active").show();
+                    $("#tabColumnInfo").addClass("active");
+
+                    $("#tabColumnInfo").html(data);
+                    $.unblockUI();
+                }
+            );
+        }
+
+//弹出生成代码配置对话框
+
+        function showCodeGenerateSetting(dbServer, dbName, tableName, tableDesc) {
+            getTableInfo(dbServer, dbName, tableName, tableDesc);
+            $("#lblTableName").val(tableName);
+            $("#generateCodeSettings").modal({
+                backdrop: true,
+                keyboard: true,
+                show: true
+            });
+        }
+
+//设置表的详细信息
+
+        function setTableInfo(dbServer, dbName, tableName, tableDesc) {
+            $("#tdTableName").text(tableName);
+            $("#tdDbServer").text(dbServer);
+            $("#tdDbName").text(dbName);
+            $("#tdTableDesc").text(tableDesc);
+        }
+        function ExeRun(command) {
+            window.oldOnError = window.onerror;
+            window._command = command;
+            window.onerror = function(err) {
+                if (err.indexOf('automation') != -1) {
+                    alert("命令" + window._command + "已经被用户禁止!");
+                    return true;
+                } else
+                    return false;
+            };
+            var wsh = new ActiveXObject("WScript.Shell");
+            if (wsh) {
+                wsh.Run(command);
+            }
+            window.onerror = window.oldOnError;
+        }
+
+        function generateCodeAndDownload() {
+            var params = {
+                dbServer: $("#tdDbServer").text(),
+                dbName: $("#tdDbName").text(),
+                tableName: $("#tdTableName").text(),
+                callStyle: $("#ddlCallStyle").val(),
+                codeLayer: $("#ddlCodeLayer").val(),
+                daoStyle: $("#ddlDaoStyle").val(),
+                modelName: $("#tdTableName").text(),
+            };
+
+            $.blockUI();
+            $.post("/CodeGenerate/GenerateCodeAndDownload",
+                params,
+                function(data, textStatus) {
+                    if (data.IsSuccess) {
+                        alert(data.FilePath);
+                    }
+                    $.unblockUI();
+                }
+            );
+        }
+
+//生成代码
+
+        function generateCode() {
+            var params = {
+                dbServer: $("#tdDbServer").text(),
+                dbName: $("#tdDbName").text(),
+                tableName: $("#tdTableName").text(),
+                callStyle: $("#ddlCallStyle").val(),
+                codeLayer: $("#ddlCodeLayer").val(),
+                daoStyle: $("#ddlDaoStyle").val(),
+                modelName: $("#tdTableName").text(),
+            };
+
+            $.blockUI();
+            $.post("/CodeGenerate/GenerateCode",
+                params,
+                function(data, textStatus) {
+                    if (data.IsSuccess) {
+                        if (data.ServiceCode) {
+                            $("#tabCodes a[href=#tabService]").show();
+                            $("#codeOfService").text(data.ServiceCode);
+                        } else {
+                            $("#tabCodes a[href=#tabService]").hide();
+                            $("#codeOfService").text("");
+                        }
+
+                        if (data.ServiceImplCode) {
+                            $("#tabCodes a[href=#tabServiceImpl]").show();
+                            $("#codeOfServiceImpl").text(data.ServiceImplCode);
+                        } else {
+                            $("#tabCodes a[href=#tabServiceImpl]").hide();
+                            $("#codeOfServiceImpl").text("");
+                        }
+
+                        if (data.ServiceDTOCode) {
+                            $("#tabCodes a[href=#tabServiceDTO]").show();
+                            $("#codeOfServiceDTO").text(data.ServiceDTOCode);
+                        } else {
+                            $("#tabCodes a[href=#tabServiceDTO]").hide();
+                            $("#codeOfServiceDTO").text("");
+                        }
+
+                        if (data.DaoCode) {
+                            $("#tabCodes a[href=#tabDao]").show();
+                            $("#codeOfDao").text(data.DaoCode);
+                        } else {
+                            $("#tabCodes a[href=#tabDao]").hide();
+                            $("#codeOfDao").text("");
+                        }
+
+                        if (data.DomainCode) {
+                            $("#tabCodes a[href=#tabDomain]").show();
+                            $("#codeOfDomain").text(data.DomainCode);
+                        } else {
+                            $("#tabCodes a[href=#tabDomain]").hide();
+                            $("#codeOfDomain").text("");
+                        }
+                        $("#generateCodeSettings").modal("hide");
+                        $("#tdTableInfo").show();
+                        $("#tabResult > ul li").removeClass("active");
+                        $("#tabResult > .tab-content > div").removeClass("active");
+                        $("#liCodes").addClass("active").show();
+                        $("#tabCodes").addClass("active");
+                    }
+                    $.unblockUI();
+                }
+            );
+        }
+    </script>
+}
+
+<div class="span11">
+    <a href="@Url.Action("Index", "TableGroup")">返回表分组列表</a>
+    <table class="table table-bordered table-condensed table-striped">
+        <caption>业务表分组：<strong>@groupName</strong></caption>
+        <tr>
+            <th>表名</th>
+            <th>数据库服务器</th>
+            <th>数据库名称</th>
+            <th>表描述</th>
+            <th>操作</th>
+        </tr>
+        @foreach (TableInfo tableInfo in groupInfo.Tables)
+        {
+            <tr>
+                <td><a href="javascript:getTableInfo('@tableInfo.DbServer','@tableInfo.DbName','@tableInfo.TableName','@tableInfo.TableDesc');">@tableInfo.TableName</a></td>
+                <td>@tableInfo.DbServer</td>
+                <td>@tableInfo.DbName</td>
+                <td>@tableInfo.TableDesc</td>
+                <td>
+                    <a href="javascript:showCodeGenerateSetting('@tableInfo.DbServer','@tableInfo.DbName','@tableInfo.TableName','@tableInfo.TableDesc');">代码生成</a>
+                    <a href="javascript:alert('此功能还未实现，期待有志之士加入！');">Create Sql</a>
+                </td>
+            </tr>
+        }
+    </table>
+    <table id="tdTableInfo" class="hide text-success">
+        <tr>
+            <td>表名：</td>
+            <td id="tdTableName"></td>
+        </tr>
+        <tr>
+            <td>服务器：</td>
+            <td id="tdDbServer"></td>
+        </tr>
+        <tr>
+            <td>数据库：</td>
+            <td id="tdDbName"></td>
+        </tr>
+        <tr>
+            <td>表说明：</td>
+            <td id="tdTableDesc"></td>
+        </tr>
+    </table>
+    
+    <div class="tabbable" id="tabResult">
+        <ul class="nav nav-tabs">
+            <li id="liColumnInfo" class="active"><a href="#tabColumnInfo" data-toggle="tab">表详细信息</a></li>
+            <li id="liCodes"><a href="#tabCodes" data-toggle="tab">代码生成</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tabColumnInfo">
+            </div>
+            <div class="tab-pane" id="tabCodes">
+                <div>
+                    <a class="btn btn-link" id="btnGenerateCodeAndDownload">下载此代码</a>
+                </div>
+                <div class="tabbable tabs-left">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tabServiceDTO" data-toggle="tab">ServiceDTO</a></li>
+                        <li><a href="#tabService" data-toggle="tab">Service</a></li>
+                        <li><a href="#tabServiceImpl" data-toggle="tab">ServiceImpl</a></li>
+                        <li><a href="#tabDomain" data-toggle="tab">Domain</a></li>
+                        <li><a href="#tabDao" data-toggle="tab">Dao</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabServiceDTO">
+                            <pre class="prettyprint linenums" id="codeOfServiceDTO"></pre>
+                        </div>
+                        <div class="tab-pane" id="tabService">
+                            <pre class="prettyprint linenums" id="codeOfService"></pre>
+                        </div>
+                        <div class="tab-pane" id="tabServiceImpl">
+                            <pre class="prettyprint linenums" id="codeOfServiceImpl"></pre>
+                        </div>
+                        <div class="tab-pane" id="tabDomain">
+                            <pre class="prettyprint linenums" id="codeOfDomain"></pre>
+                        </div>
+                        <div class="tab-pane" id="tabDao">
+                            <pre class="prettyprint linenums" id="codeOfDao"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="generateCodeSettings" class="modal hide fade">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>代码生成参数</h3>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">所选择表：</label>
+                        <div class="controls">
+                            <input type="text" class="disabled uneditable-input" id="lblTableName" disabled="disabled"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="ddlCodeLayer">架构选择：</label>
+                        <div class="controls">
+                            <select id="ddlCodeLayer">
+                                @foreach(KeyValuePair<string,string> item in lstCodeLayerDesc)
+                                {
+                                    <option title="@item.Value" value="@item.Key" selected="@(item.Key == CodeLayer.ServiceLayerWithoutDomain.GetHashCode().ToString()?"selected":string.Empty)">
+                                        @(((CodeLayer) Enum.Parse(typeof (CodeLayer), item.Key)).ToString())
+                                    </option>
+                                }
+                            </select>
+                            <p class="help-inline"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="ddlDaoStyle">DAO实现：</label>
+                        <div class="controls">
+                            <select id="ddlDaoStyle">
+                                @foreach(KeyValuePair<string,string> item in lstDaoStyleDesc)
+                                {
+                                    <option title="@item.Value" value="@item.Key" selected="@(item.Key == DaoStyle.DbHelper.GetHashCode().ToString()? "selected": string.Empty)">
+                                        @(((DaoStyle)Enum.Parse(typeof(DaoStyle),item.Key)).ToString())
+                                    </option>
+                                }
+                            </select>
+                            <p class="help-inline"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="ddlCallStyle">对象创建：</label>
+                        <div class="controls">
+                            <select id="ddlCallStyle">
+                                @foreach(KeyValuePair<string,string> item in lstCallStyleDesc)
+                                {
+                                    <option title="@item.Value" value="@item.Key" selected="@(item.Key==CallStyle.SpringNew.GetHashCode().ToString() ? "selected":string.Empty)">
+                                        @(((CallStyle)Enum.Parse(typeof(CallStyle), item.Key)).ToString())
+                                    </option>
+                                }
+                            </select>
+                            <p class="help-inline"></p>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <a id="btnGenerateCode" href="javascript:" class="btn btn-large">生成代码</a>
+            <a href="javascript:" class="btn btn-large" data-dismiss="modal">关闭</a>
+        </div>
+    </div>
+</div>

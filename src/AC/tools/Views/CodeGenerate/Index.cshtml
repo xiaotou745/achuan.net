@@ -1,0 +1,373 @@
+﻿@using AC.Code.Config
+@{
+    ViewBag.Title = "代码生成器";
+    var lstDbServers = ViewData["DbServers"] as IList<string>;
+    string serverName = ViewData["DbServer"].ToString();
+    string dbName = ViewData["DbName"].ToString();
+    string dbNameSource = ViewData["DbNameSource"].ToString();
+    string dbTableSource = ViewData["DbTableSource"].ToString();
+
+    var lstCodeLayerDesc = ViewData["lstCodeLayerDesc"] as IList<KeyValuePair<string, string>>;
+    var lstDaoStyleDesc = ViewData["lstDaoStyleDesc"] as IList<KeyValuePair<string, string>>;
+    var lstCallStyleDesc = ViewData["lstCallStyleDesc"] as IList<KeyValuePair<string, string>>;
+}
+@section HeadSection
+{
+    <link href="@Url.Content("~/Content/prettify.css")" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/prettify.js")"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(window).prettyPrint && prettyPrint();
+
+            var dbName = "@dbName";
+            if (dbName == "") {
+                $("#txtDbName").focus();
+            } else {
+                $("#txtTableName").focus();
+            }
+            $("#dbServer").on("change", dbServerChanged);
+            $("#txtDbName").on("keydown", dbNameKeydown);
+            $("#txtTableName").on("keydown", tableNameKeydown);
+            $("#btnCodeSettings").on("click", showCodeGenerateSetting);
+            $("#ddlCallStyle,#ddlCodeLayer,#ddlDaoStyle").change(function() {
+                var title = $(this).find("option:selected").attr("title");
+                $(this).next("p").text(title);
+            });
+            $("#ddlCodeLayer").change();
+            $("#ddlCallStyle").change();
+            $("#ddlDaoStyle").change();
+
+            $("#btnGenerateCode").on("click", function() {
+                generateCode();
+            });
+            
+            $("#btnGenerateCodeAndDownload").on("click", function () {
+                generateCodeAndDownload();
+            });
+
+            $("#tabResult > ul li").addClass("hide");
+        });
+        function generateCodeAndDownload() {
+            var params = {
+                dbServer: $("#tdDbServer").text(),
+                dbName: $("#tdDbName").text(),
+                tableName: $("#tdTableName").text(),
+                callStyle: $("#ddlCallStyle").val(),
+                codeLayer: $("#ddlCodeLayer").val(),
+                daoStyle: $("#ddlDaoStyle").val(),
+                modelName: $("#tdTableName").text(),
+            };
+
+            $.blockUI();
+            $.post("/CodeGenerate/GenerateCodeAndDownload",
+                params,
+                function (data, textStatus) {
+                    if (data.IsSuccess) {
+                        alert(data.FilePath);
+                    }
+                    $.unblockUI();
+                }
+            );
+        }
+        function dbServerChanged() {
+            $("#txtDbName").val("");
+            $("#txtTableName").val("");
+            $("#dbSelector").submit();
+        }
+        //弹出生成代码配置对话框
+        function showCodeGenerateSetting() {
+            $("#lblTableName").val($("#txtTableName").val());
+            $("#generateCodeSettings").modal({
+                backdrop: true,
+                keyboard: true,
+                show: true
+            });
+        }
+        function dbNameKeydown(evt) {
+            evt = (evt) ? evt : ((window.event) ? window.event : "");
+            var keyCode = evt.keyCode ? evt.keyCode : (evt.which ? evt.which : evt.charCode);
+            if (keyCode != 13) {
+                return;
+            }
+            var dbName = $("#txtDbName").val();
+            if (dbName == "") {
+                $("#txtDbName").focus();
+                return;
+            }
+            $("#txtTableName").val("");
+            $("#dbSelector").submit();
+        }
+
+        function tableNameKeydown(evt) {
+            evt = (evt) ? evt : ((window.event) ? window.event : "");
+            var keyCode = evt.keyCode ? evt.keyCode : (evt.which ? evt.which : evt.charCode);
+            if (keyCode != 13) {
+                return;
+            }
+            setTableInfo($("#dbServer").val(), $("#txtDbName").val(), $("#txtTableName").val(), "");
+            getTableInfo($("#dbServer").val(), $("#txtDbName").val(), $("#txtTableName").val(), "");
+        }
+
+        function setTableInfo(dbServer, dbName, tableName, tableDesc) {
+            $("#tdTableName").text(tableName);
+            $("#tdDbServer").text(dbServer);
+            $("#tdDbName").text(dbName);
+            $("#tdTableDesc").text(tableDesc);
+        }
+
+        function getTableInfo(dbServer, dbName, tableName, tableDesc) {
+            $.blockUI();
+            $.post("/TableView/GetHtmlTableInfo",
+                { dbServer: dbServer, dbName: dbName, dbTable: tableName },
+                function(data) {
+                    setTableInfo(dbServer, dbName, tableName, tableDesc);
+                    $("#tdTableInfo").show();
+
+                    $("#tabResult > ul li").removeClass("active");
+                    $("#tabResult > .tab-content > div").removeClass("active");
+                    $("#liColumnInfo").addClass("active").show();
+                    $("#tabColumnInfo").addClass("active");
+
+                    $("#tabColumnInfo").html(data);
+                    $.unblockUI();
+                }
+            );
+        }
+
+        function generateCode() {
+            var params = {
+                dbServer: $("#tdDbServer").text(),
+                dbName: $("#tdDbName").text(),
+                tableName: $("#tdTableName").text(),
+                callStyle: $("#ddlCallStyle").val(),
+                codeLayer: $("#ddlCodeLayer").val(),
+                daoStyle: $("#ddlDaoStyle").val(),
+                modelName: $("#tdTableName").text(),
+            };
+            $.blockUI();
+            $.post("/CodeGenerate/GenerateCode",
+                params,
+                function(data, textStatus) {
+                    if (data.IsSuccess) {
+                        if (data.ServiceCode) {
+                            $("#tabCodes a[href=#tabService]").show();
+                            $("#codeOfService").text(data.ServiceCode);
+                        } else {
+                            $("#tabCodes a[href=#tabService]").hide();
+                            $("#codeOfService").text("");
+                        }
+
+                        if (data.ServiceImplCode) {
+                            $("#tabCodes a[href=#tabServiceImpl]").show();
+                            $("#codeOfServiceImpl").text(data.ServiceImplCode);
+                        } else {
+                            $("#tabCodes a[href=#tabServiceImpl]").hide();
+                            $("#codeOfServiceImpl").text("");
+                        }
+
+                        if (data.ServiceDTOCode) {
+                            $("#tabCodes a[href=#tabServiceDTO]").show();
+                            $("#codeOfServiceDTO").text(data.ServiceDTOCode);
+                        } else {
+                            $("#tabCodes a[href=#tabServiceDTO]").hide();
+                            $("#codeOfServiceDTO").text("");
+                        }
+
+                        if (data.DaoCode) {
+                            $("#tabCodes a[href=#tabDao]").show();
+                            $("#codeOfDao").text(data.DaoCode);
+                        } else {
+                            $("#tabCodes a[href=#tabDao]").hide();
+                            $("#codeOfDao").text("");
+                        }
+
+                        if (data.DomainCode) {
+                            $("#tabCodes a[href=#tabDomain]").show();
+                            $("#codeOfDomain").text(data.DomainCode);
+                        } else {
+                            $("#tabCodes a[href=#tabDomain]").hide();
+                            $("#codeOfDomain").text("");
+                        }
+                        $("#generateCodeSettings").modal("hide");
+                        $("#tdTableInfo").show();
+                        $("#tabResult > ul li").removeClass("active");
+                        $("#tabResult > .tab-content > div").removeClass("active");
+                        $("#liCodes").addClass("active").show();
+                        $("#tabCodes").addClass("active");
+                    }
+                    $.unblockUI();
+                }
+            );
+        }
+    </script>
+}
+<div class="well row span11">
+    <div class="span3">
+        <form id="dbSelector" method="POST">
+            <legend>配置条件</legend>
+            <span class="hide alert-error" id="txtError"></span>
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label" for="dbServer">选择服务器</label>
+                    <div class="controls">
+                        <div class="input-prepend">
+                            <span class="add-on"><i class="icon-search"></i></span>
+                            <select id="dbServer" name="dbServer">
+                                @foreach (string dbServer in lstDbServers)
+                                {
+                                    <option @(dbServer == serverName ? @Html.Raw("selected='selected'").ToString() : string.Empty)>@dbServer</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="txtDbName" class="control-label">选择数据库</label>
+                    <div class="controls">
+                        <div class="input-append" id="divtest">
+                            <span class="add-on"><i class="icon-search"></i></span>
+                            <input type="text" id="txtDbName" name="dbName" value="@dbName" data-provide="typeahead" data-items="100" data-source="@dbNameSource"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label for="txtTableName" class="control-label">选择数据表</label>
+                    <div class="controls">
+                        <div class="input-append">
+                            <span class="add-on"><i class="icon-search"></i></span>
+                            <input type="text" id="txtTableName"  data-provide="typeahead" data-items="50" data-source="@dbTableSource"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="span4 pull-left text-success">
+        <table id="tdTableInfo" class="hide span11">
+            <tr>
+                <td>表名：</td>
+                <td id="tdTableName"></td>
+            </tr>
+            <tr>
+                <td>服务器：</td>
+                <td id="tdDbServer"></td>
+            </tr>
+            <tr>
+                <td>数据库：</td>
+                <td id="tdDbName"></td>
+            </tr>
+            <tr>
+                <td>表说明：</td>
+                <td id="tdTableDesc"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a class="btn btn-large" id="btnCodeSettings">生成代码</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+    
+<div class="tabbable span11" id="tabResult">
+    <ul class="nav nav-tabs">
+        <li id="liColumnInfo" class="active"><a href="#tabColumnInfo" data-toggle="tab">表详细信息</a></li>
+        <li id="liCodes"><a href="#tabCodes" data-toggle="tab">代码生成</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tabColumnInfo">
+        </div>
+        <div class="tab-pane" id="tabCodes">
+            <div>
+                <a class="btn btn-link" id="btnGenerateCodeAndDownload">下载此代码</a>
+            </div>
+            <div class="tabbable tabs-left">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tabServiceDTO" data-toggle="tab">ServiceDTO</a></li>
+                    <li><a href="#tabService" data-toggle="tab">Service</a></li>
+                    <li><a href="#tabServiceImpl" data-toggle="tab">ServiceImpl</a></li>
+                    <li><a href="#tabDomain" data-toggle="tab">Domain</a></li>
+                    <li><a href="#tabDao" data-toggle="tab">Dao</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tabServiceDTO">
+                        <pre class="prettyprint linenums" id="codeOfServiceDTO"></pre>
+                    </div>
+                    <div class="tab-pane" id="tabService">
+                        <pre class="prettyprint linenums" id="codeOfService"></pre>
+                    </div>
+                    <div class="tab-pane" id="tabServiceImpl">
+                        <pre class="prettyprint linenums" id="codeOfServiceImpl"></pre>
+                    </div>
+                    <div class="tab-pane" id="tabDomain">
+                        <pre class="prettyprint linenums" id="codeOfDomain"></pre>
+                    </div>
+                    <div class="tab-pane" id="tabDao">
+                        <pre class="prettyprint linenums" id="codeOfDao"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="generateCodeSettings" class="modal hide fade">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>代码生成参数</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label">所选择表：</label>
+                    <div class="controls">
+                        <input type="text" class="disabled uneditable-input" id="lblTableName" disabled="disabled"/>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="ddlCodeLayer">架构选择：</label>
+                    <div class="controls">
+                        <select id="ddlCodeLayer">
+                            @foreach (var item in lstCodeLayerDesc)
+                            {
+                                <option title="@item.Value" value="@item.Key">@(((CodeLayer) Enum.Parse(typeof (CodeLayer), item.Key)).ToString())</option>
+                            }
+                        </select>
+                        <p class="help-inline"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="ddlDaoStyle">DAO实现：</label>
+                    <div class="controls">
+                        <select id="ddlDaoStyle">
+                            @foreach (var item in lstDaoStyleDesc)
+                            {
+                                <option title="@item.Value" value="@item.Key">@(((DaoStyle) Enum.Parse(typeof (DaoStyle), item.Key)).ToString())</option>
+                            }
+                        </select>
+                        <p class="help-inline"></p>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="ddlCallStyle">对象创建：</label>
+                    <div class="controls">
+                        <select id="ddlCallStyle">
+                            @foreach (var item in lstCallStyleDesc)
+                            {
+                                <option title="@item.Value" value="@item.Key">@(((CallStyle) Enum.Parse(typeof (CallStyle), item.Key)).ToString())</option>
+                            }
+                        </select>
+                        <p class="help-inline"></p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a id="btnGenerateCode" href="javascript:" class="btn btn-large">生成代码</a>
+        <a href="javascript:" class="btn btn-large" data-dismiss="modal">关闭</a>
+    </div>
+</div>

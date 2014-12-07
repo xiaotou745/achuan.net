@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "创建表工具";
+}
+<div class="row">
+    <div class="tabbable span8">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tabColumns" data-toggle="tab">设置列</a></li>
+            <li><a href="#tabSql" data-toggle="tab">CreateSql</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tabColumns">
+                <table id="dgvColumns"></table>
+            </div>
+            <div class="tab-pane" id="tabSql">
+                <pre class="prettyprint linenums" id="codeOfCreateSql"></pre>
+            </div>
+        </div>
+    </div>
+</div>

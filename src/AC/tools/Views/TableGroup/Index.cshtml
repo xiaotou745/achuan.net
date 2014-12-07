@@ -1,0 +1,44 @@
+﻿@using DZ.ToolWeb.Service
+@{
+    ViewBag.Title = "表分组设置";
+    var lstTableGroups = (List<TableGroupInfo>)ViewData["lstTableGroups"];
+}
+
+<div class="span11">
+    <button class="btn btn-link" id="btnAddTableGroup" name="btnAddTableGroup" onclick="javascript:alert('此功能还未实现，期待有志之士加入！');">添加分组</button>
+</div>
+@if(lstTableGroups.Count >0)
+{
+    <div class="text-center span11">
+        <table class="table table-bordered table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>分组名称</th>
+                    <th>表数量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(TableGroupInfo groupInfo in lstTableGroups)
+                {
+                    <tr>
+                        <td><a href="@Url.Action("Details","TableGroup",new { groupName=groupInfo.GroupName })">@groupInfo.GroupName</a></td>
+                        <td>@groupInfo.Tables.Count</td>
+                        <td class="left">
+                            <a href="javascript:alert('此功能还未实现，期待有志之士加入！');">修改</a>
+                            <a href="javascript:alert('此功能还未实现，期待有志之士加入！');">删除</a>
+                            @*<a href="@Url.Action("TableGroupModify", "DbTools", new { groupName = groupInfo.GroupName })">修改</a>*@
+                            @*<a href="@Url.Action("TableGroupRemove", "DbTools", new { groupName = groupInfo.GroupName })">删除</a>*@
+                            <a href="@Url.Action("Details", "TableGroup", new { groupName = groupInfo.GroupName })">详细信息</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-center">还没有分组信息，请添加。</div>
+}
+

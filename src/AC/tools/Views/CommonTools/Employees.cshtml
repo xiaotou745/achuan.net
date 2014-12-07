@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "通讯录";
+}
+@{
+    var phoneBooks = (Dictionary<string, string>) ViewData["PhoneBooks"];
+}
+
+<div class="subnav subnav-fixed">
+    <ul class="nav nav-pills">
+        @foreach(var sectionid in phoneBooks.Keys)
+        {
+            <li><a href="#@sectionid">@Html.Raw(sectionid)</a></li>
+        }
+    </ul>
+</div>
+
+<div class="row span8">
+        @foreach(var phone in phoneBooks.Values)
+        {
+            @Html.Raw(phone)
+        }
+</div>

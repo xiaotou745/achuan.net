@@ -1,0 +1,119 @@
+﻿@{
+    var lstDbServers = ViewData["DbServers"] as IList<string>;
+    string serverName = ViewData["DbServer"].ToString();
+    string dbName = ViewData["DbName"].ToString();
+    string dbNameSource = ViewData["DbNameSource"].ToString();
+    string dbTableSource = ViewData["DbTableSource"].ToString();
+}
+@section HeadSection
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var dbName = "@dbName";
+            if(dbName == "") {
+                $("#txtDbName").focus();
+            }
+            else {
+                $("#txtTableName").focus();
+            }
+            $("#dbServer").on("change", dbServerChanged);
+            $("#txtDbName").on("keydown", dbNameKeydown);
+            $("#txtTableName").on("keydown", tableNameKeydown);
+        });
+
+        function dbServerChanged() {
+            $("#txtDbName").val("");
+            $("#txtTableName").val("");
+            $("#dbSelector").submit();
+        }
+
+        function dbNameKeydown() {
+            if(event.keyCode!=13) {
+                return;
+            }
+            var dbName= $("#txtDbName").val();
+            if(dbName=="") {
+                $("#txtDbName").focus();
+                return;
+            }
+            $("#txtTableName").val("");
+            $("#dbSelector").submit();
+        }
+
+        function tableNameKeydown() {
+            if (event.keyCode != 13) {
+                return;
+            }
+            var dbTableName = $("#txtTableName").val();
+            if (dbTableName == "") {
+                $("#txtTableName").focus();
+                return;
+            }
+
+            $.post(
+                "/DbTools/GetHtmlTableInfo",
+                { dbServer: $("#dbServer").val(), dbName: $("#txtDbName").val(), dbTable: $("#txtTableName").val() },
+                function(data) {
+                    $("#contents").html(data);
+                }
+            );
+        }
+    </script>
+}
+<div class="well span3">
+    <form id="dbSelector" method="POST">
+        <legend>配置条件</legend>
+        <span class="hide alert-error" id="txtError"></span>
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label" for="dbServer">选择服务器</label>
+                <div class="controls">
+                    <div class="input-prepend">
+                        <span class="add-on"><i class="icon-search"></i></span>
+                        <select id="dbServer" name="dbServer">
+                            @foreach(var dbServer in lstDbServers)
+                            {
+                                <option @(dbServer == serverName ? @Html.Raw("selected='selected'").ToString() : string.Empty)>@dbServer</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="txtDbName" class="control-label">选择数据库</label>
+                <div class="controls">
+                    <div class="input-append" id="divtest">
+                        <span class="add-on"><i class="icon-search"></i></span>
+                        <input type="text" id="txtDbName" name="dbName" value="@dbName" data-provide="typeahead" data-items="100" data-source="@dbNameSource"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="txtTableName" class="control-label">选择数据表</label>
+                <div class="controls">
+                    <div class="input-append">
+                        <span class="add-on"><i class="icon-search"></i></span>
+                        <input type="text" id="txtTableName"  data-provide="typeahead" data-items="50" data-source="@dbTableSource"/>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+        
+<div class="span8">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#tableView" data-toggle="tab">表信息浏览</a></li>
+        <li><a href="#tabCreateSQL" data-toggle="tab">Create SQL</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tableView">
+            <div id="contents"></div>
+        </div>
+        <div class="tab-pane" id="tabCreateSQL">
+            <pre class="prettyprint linenums" id="createSQL"></pre>
+        </div>
+    </div>
+</div>

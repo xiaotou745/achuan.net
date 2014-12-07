@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "DES加解密";
+}
+<form>
+    <legend>DES加解密工具</legend>
+    <label>请输入要加密或解密的字符串：</label>
+    <textarea id="txtSource" name="txtSource" rows="5" class="span12"></textarea><label id="lblError" class="alert-error"></label>
+    <div class="form-actions">
+        <button id="btnEncrypt" type="button" class="btn btn-primary" value="加密">加密</button>
+        <button id="btnDecrpty" type="button" class="btn btn-primary" value="解密">解密</button>
+    </div>
+    <textarea id="txtTarget" name="txtTarget" rows="5" class="span12"></textarea>
+</form>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnEncrypt").bind("click", Encrypt);
+        $("#btnDecrpty").bind("click", Decrpty);
+        $("#lblError").hide();
+        $("#txtSource").focus();
+    });
+    function SourceIsNullOrEmpty() {
+        var txtSource = $("#txtSource").val();
+        if (txtSource == '') {
+            $("#lblError").text("请输入要加解密的字符串.");
+            $("#lblError").show();
+            $("#txtSource").focus();
+            return false;
+        }
+        else {
+            $("#lblError").hide();
+            return true;
+        }
+    }
+    function Encrypt() {
+        if (!SourceIsNullOrEmpty()) {
+            return false;
+        }
+
+        $.post(
+            "/CommonTools/DESAndMd5",
+            { type: "ENC", txtSource: $("#txtSource").val() },
+            function (data) {
+                if (data != null) {
+                    $("#txtTarget").val(data);
+                }
+            }
+        );
+        return true;
+    }
+
+    function Decrpty() {
+        if (!SourceIsNullOrEmpty()) {
+            return false;
+        }
+        $.post(
+            "/CommonTools/DESAndMd5",
+            { type: "DEC", txtSource: $("#txtSource").val() },
+            function (data) {
+                if (data != null) {
+                    $("#txtTarget").val(data);
+                }
+            }
+        );
+        return true;
+    }
+</script>
