@@ -7,7 +7,7 @@ using AC.Code.Config;
 using AC.Code.DbObjects;
 using AC.Code.Helper;
 
-namespace DZ.ToolWeb.Controllers
+namespace AC.Tools.Controllers
 {
     public class TableViewController : Controller
     {

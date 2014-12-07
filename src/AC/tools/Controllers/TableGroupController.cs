@@ -5,7 +5,7 @@ using AC.Code.Config;
 using AC.Tools.Service;
 using AC.Util;
 
-namespace DZ.ToolWeb.Controllers
+namespace AC.Tools.Controllers
 {
     public class TableGroupController : Controller
     {

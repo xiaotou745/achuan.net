@@ -14,7 +14,7 @@ using AC.Code.Helper;
 using AC.Code.IBuilder;
 using AC.Util;
 
-namespace DZ.ToolWeb.Controllers
+namespace AC.Tools.Controllers
 {
     public class CodeGenerateController : Controller
     {

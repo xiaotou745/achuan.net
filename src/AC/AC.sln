@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tools.Tests", "tools.Tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AC.CodeGenerator", "AC.CodeGenerator\AC.CodeGenerator.csproj", "{32A0597B-29EC-421E-ACEE-790085E652F1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{062D7A1C-D26C-48EC-BEE4-48660B6B5326}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,5 +42,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{32A0597B-29EC-421E-ACEE-790085E652F1} = {062D7A1C-D26C-48EC-BEE4-48660B6B5326}
+		{FDF6B367-6E74-4E7E-BEA8-FD53D6278C9A} = {062D7A1C-D26C-48EC-BEE4-48660B6B5326}
+		{FA85394F-AC26-4F5F-B192-CB3B96CC4C18} = {062D7A1C-D26C-48EC-BEE4-48660B6B5326}
 	EndGlobalSection
 EndGlobal

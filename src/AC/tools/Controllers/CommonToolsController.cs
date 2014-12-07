@@ -3,7 +3,7 @@ using System.IO;
 using System.Web.Mvc;
 using AC.Tools.Service.Utils;
 
-namespace AC.ToolWeb.Controllers
+namespace AC.Tools.Controllers
 {
     public class CommonToolsController : Controller
     {
