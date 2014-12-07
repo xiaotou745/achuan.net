@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{32A0597B-29EC-421E-ACEE-790085E652F1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>AC</RootNamespace>
+    <AssemblyName>AC.CodeGenerator</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\..\..\libs\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Code\Builder\BuilderDao.cs" />
+    <Compile Include="Code\Builder\BuilderDomain.cs" />
+    <Compile Include="Code\Builder\BuilderDTO.cs" />
+    <Compile Include="Code\Builder\BuilderService.cs" />
+    <Compile Include="Code\Builder\BuilderServiceImpl.cs" />
+    <Compile Include="Code\Builder\BuilderSQL.cs" />
+    <Compile Include="Code\Config\CodeGenerateConfig.cs" />
+    <Compile Include="Code\Config\CodeNameBase.cs" />
+    <Compile Include="Code\Config\DbSettings.cs" />
+    <Compile Include="Code\Config\Enum.cs" />
+    <Compile Include="Code\DbObjects\Cache.cs" />
+    <Compile Include="Code\DbObjects\DBFactory.cs" />
+    <Compile Include="Code\DbObjects\DbObject.cs" />
+    <Compile Include="Code\DbObjects\DbType.cs" />
+    <Compile Include="Code\DbObjects\IDbObject.cs" />
+    <Compile Include="Code\Helper\CodeCommon.cs" />
+    <Compile Include="Code\Helper\CodeKeys.cs" />
+    <Compile Include="Code\Helper\ColumnInfo.cs" />
+    <Compile Include="Code\Helper\DataTypeHelper.cs" />
+    <Compile Include="Code\Helper\StringPlus.cs" />
+    <Compile Include="Code\Helper\TableInfo.cs" />
+    <Compile Include="Code\IBuilder\IBuilderDao.cs" />
+    <Compile Include="Code\IBuilder\IBuilderDomain.cs" />
+    <Compile Include="Code\IBuilder\IBuilderDTO.cs" />
+    <Compile Include="Code\IBuilder\IBuilderService.cs" />
+    <Compile Include="Code\IBuilder\IBuilderServiceImpl.cs" />
+    <Compile Include="Code\IBuilder\IBuilderSQL.cs" />
+    <Compile Include="Code\JavaBuilder\BuilderDao.cs" />
+    <Compile Include="Code\JavaBuilder\BuilderDomain.cs" />
+    <Compile Include="Code\JavaBuilder\BuilderDTO.cs" />
+    <Compile Include="Code\JavaBuilder\BuilderService.cs" />
+    <Compile Include="Code\JavaBuilder\BuilderServiceImpl.cs" />
+    <Compile Include="Code\JavaBuilder\BuilderSQL.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Code\Config\dbservers.xml" />
+    <EmbeddedResource Include="Code\Helper\datatype.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

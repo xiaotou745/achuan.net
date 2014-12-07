@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<types>
+  <section value="DbToCS">
+    <type name="varchar" value="string" />
+    <type name="varchar2" value="string" />
+    <type name="nvarchar" value="string" />
+    <type name="nvarchar2" value="string" />
+    <type name="char" value="string" />
+    <type name="nchar" value="string" />
+    <type name="text" value="string" />
+    <type name="longtext" value="string" />
+    <type name="ntext" value="string" />
+    <type name="string" value="string" />
+    <type name="date" value="DateTime" />
+    <type name="datetime" value="DateTime" />
+    <type name="smalldatetime" value="DateTime" />
+    <type name="smallint" value="int" />
+    <type name="single" value="Single" />
+    <type name="int" value="int" />
+    <type name="number" value="int" />
+    <type name="bigint" value="long" />
+    <type name="tinyint" value="int" />
+    <type name="float" value="decimal" />
+    <type name="numeric" value="decimal" />
+    <type name="decimal" value="decimal" />
+    <type name="money" value="decimal" />
+    <type name="smallmoney" value="decimal" />
+    <type name="real" value="decimal" />
+    <type name="bit" value="bool" />
+    <type name="binary" value="byte[]" />
+    <type name="varbinary" value="byte[]" />
+    <type name="image" value="byte[]" />
+    <type name="raw" value="byte[]" />
+    <type name="long" value="byte[]" />
+    <type name="long raw" value="byte[]" />
+    <type name="blob" value="byte[]" />
+    <type name="bfile" value="byte[]" />
+    <type name="uniqueidentifier" value="Guid" />
+    <type name="integer" value="int" />
+    <type name="double" value="Double" />
+    <type name="enum" value="Enum" />
+    <type name="timestamp" value="DateTime" />
+    <type name="variant" value="object" />
+  </section>
+  <section value="ToSQLProc">
+    <type name="varchar" value="VarChar" />
+    <type name="string" value="VarChar" />
+    <type name="nvarchar" value="NVarChar" />
+    <type name="char" value="Char" />
+    <type name="nchar" value="NChar" />
+    <type name="text" value="Text" />
+    <type name="ntext" value="NText" />
+    <type name="datetime" value="DateTime" />
+    <type name="smalldatetime" value="SmallDateTime" />
+    <type name="smallint" value="SmallInt" />
+    <type name="tinyint" value="TinyInt" />
+    <type name="int" value="Int" />
+    <type name="bigint" value="BigInt" />
+    <type name="float" value="Float" />
+    <type name="real" value="Real" />
+    <type name="numeric" value="Decimal" />
+    <type name="decimal" value="Decimal" />
+    <type name="money" value="Money" />
+    <type name="smallmoney" value="SmallMoney" />
+    <type name="bool" value="Bit" />
+    <type name="bit" value="Bit" />
+    <type name="binary" value="Binary" />
+    <type name="varbinary" value="VarBinary" />
+    <type name="image" value="Image" />
+    <type name="uniqueidentifier" value="UniqueIdentifier" />
+    <type name="timestamp" value="Timestamp" />
+  </section>
+  <section value="ToOraProc">
+    <type name="char" value="Char" />
+    <type name="varchar2" value="VarChar" />
+    <type name="string" value="VarChar" />
+    <type name="nvarchar2" value="NVarChar" />
+    <type name="nchar" value="NChar" />
+    <type name="long" value="LongVarChar" />
+    <type name="number" value="Number" />
+    <type name="int" value="Number" />
+    <type name="date" value="DateTime" />
+    <type name="raw" value="Raw" />
+    <type name="long raw" value="LongRaw" />
+    <type name="blob" value="Blob" />
+    <type name="bit" value="Clob" />
+    <type name="clob" value="Clob" />
+    <type name="nclob" value="NClob" />
+    <type name="bfile" value="BFile" />
+  </section>
+  <section value="ToMySQLProc">
+    <type name="binary" value="Binary" />
+    <type name="bool" value="Bit" />
+    <type name="bit" value="Bit" />
+    <type name="blob" value="Blob" />
+    <type name="double" value="Double" />
+    <type name="Date" value="DateTime" />
+    <type name="datetime" value="DateTime" />
+    <type name="numeric" value="Decimal" />
+    <type name="decimal" value="Decimal" />
+    <type name="float" value="Float" />
+    <type name="enum" value="Enum" />
+    <type name="geometry" value="Geometry" />
+    <type name="longBlob" value="LongBlob" />
+    <type name="varchar" value="VarChar" />
+    <type name="string" value="String" />
+    <type name="char" value="VarChar" />
+    <type name="text" value="Text" />
+    <type name="longtext" value="LongText" />
+    <type name="time" value="Time" />
+    <type name="SmallInt" value="Int32" />
+    <type name="TinyInt" value="Int32" />
+    <type name="timestamp" value="Timestamp" />
+    <type name="tinyText" value="TinyText" />
+    <type name="tinyBlob" value="TinyBlob" />
+    <type name="int" value="Int32" />
+    <type name="varbinary" value="VarBinary" />
+    <type name="varstring" value="VarString" />
+    <type name="year" value="Year" />
+    <type name="varchar" value="VarChar" />
+  </section>
+  <section value="ToOleDbProc">
+    <type name="varchar" value="VarChar" />
+    <type name="string" value="VarChar" />
+    <type name="short" value="SmallInt" />
+    <type name="single" value="Single" />
+    <type name="nvarchar" value="LongVarChar" />
+    <type name="char" value="Char" />
+    <type name="nchar" value="NChar" />
+    <type name="text" value="LongVarChar" />
+    <type name="ntext" value="LongVarChar" />
+    <type name="datetime" value="Date" />
+    <type name="smalldatetime" value="Date" />
+    <type name="smallint" value="SmallInt" />
+    <type name="tinyint" value="TinyInt" />
+    <type name="int" value="Integer" />
+    <type name="bigint" value="BigInt" />
+    <type name="money" value="Decimal" />
+    <type name="double" value="Double" />
+    <type name="smallmoney" value="Decimal" />
+    <type name="float" value="Decimal" />
+    <type name="numeric" value="Decimal" />
+    <type name="decimal" value="Decimal" />
+    <type name="bool" value="Boolean" />
+    <type name="bit" value="Bit" />
+    <type name="binary" value="Binary" />
+    <type name="byte" value="Binary" />
+  </section>
+  <section value="IsAddMark">
+    <type name="nvarchar" value="true" />
+    <type name="nchar" value="true" />
+    <type name="ntext" value="true" />
+    <type name="varchar" value="true" />
+    <type name="varchar2" value="true" />
+    <type name="nvarchar2" value="true" />
+    <type name="char" value="true" />
+    <type name="clob" value="true" />
+    <type name="string" value="true" />
+    <type name="text" value="true" />
+    <type name="date" value="true" />
+    <type name="datetime" value="true" />
+    <type name="smalldatetime" value="true" />
+    <type name="uniqueidentifier" value="true" />
+  </section>
+  <section value="isValueType">
+    <type name="int" value="true" />
+    <type name="Int32" value="true" />
+    <type name="Int16" value="true" />
+    <type name="Int64" value="true" />
+    <type name="DateTime" value="true" />
+    <type name="decimal" value="true" />
+    <type name="Decimal" value="true" />
+  </section>
+  <section value="AccessDbTypeMap">
+    <type name="2" value="short" />
+    <type name="3" value="int" />
+    <type name="4" value="single" />
+    <type name="5" value="double" />
+    <type name="6" value="money" />
+    <type name="7" value="datetime" />
+    <type name="11" value="bit" />
+    <type name="17" value="byte" />
+    <type name="130" value="varchar" />
+    <type name="131" value="float" />
+  </section>
+</types>

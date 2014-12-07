@@ -10,6 +10,10 @@ src/AC/AC.Core/obj/
 src/AC/AC.Data/bin/
 src/AC/AC.Data/obj/
 
+#=============ac.codegenerator ignore
+src/AC/AC.CodeGenerator/bin/
+src/AC/AC.CodeGenerator/obj/
+
 #=============tools ignore
 src/AC/tools/bin/
 src/AC/tools/obj/
