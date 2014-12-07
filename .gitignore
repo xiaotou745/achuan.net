@@ -1,0 +1,6 @@
+*.user
+*.suo
+*.bak
+
+src/AC/AC.Core/bin/
+src/AC/AC.Core/obj/
