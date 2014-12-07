@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using AC.Data.ConnString.Common;
 using Common.Logging;
 using AC.Util;
 
@@ -49,7 +48,7 @@ namespace AC.Data.ConnString.WMS
 
 		#region Logger Definition.
 
-		private static readonly ILog logger = DbLogManager.GetConnectionStringLog();
+		private static readonly ILog logger = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 

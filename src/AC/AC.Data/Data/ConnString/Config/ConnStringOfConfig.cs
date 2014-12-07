@@ -1,4 +1,4 @@
-namespace AC.Data.ConnString.Common
+namespace AC.Data.ConnString.Config
 {
 	/// <summary>
 	/// 表示应用程序配置文件中的ConnectionString配置节定义的字符串
@@ -10,7 +10,7 @@ namespace AC.Data.ConnString.Common
 	/// </connectionStrings>
 	/// </code>
 	/// </example>
-	public class ConfigConnectionString : IConnectionString
+	public class ConnStringOfConfig : IConnectionString
 	{
 		#region IConnectionString Members
 

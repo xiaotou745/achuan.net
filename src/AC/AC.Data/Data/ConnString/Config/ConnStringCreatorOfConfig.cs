@@ -5,22 +5,22 @@ using System.Text;
 using AC.Dao;
 using Common.Logging;
 
-namespace AC.Data.ConnString.Common
+namespace AC.Data.ConnString.Config
 {
 	/// <summary>
 	/// 用来创建应用程序配置文件中的ConnectionString配置节中定义的字符串
 	/// </summary>
-	public class ConfigConnStringCreator : IConnectionStringCreator
+	public class ConnStringCreatorOfConfig : IConnectionStringCreator
 	{
 		#region Logger Definition
 
-		private readonly ILog logger = DbLogManager.GetConnectionStringLog();
+		private readonly ILog logger = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 
 		#region Private Constructor.
 
-		private ConfigConnStringCreator()
+		private ConnStringCreatorOfConfig()
 		{
 		}
 
@@ -40,7 +40,7 @@ namespace AC.Data.ConnString.Common
 
 				foreach (ConnectionStringSettings connectionString in ConfigurationManager.ConnectionStrings)
 				{
-					var connString = new ConfigConnectionString
+					var connString = new ConnStringOfConfig
 					{
 						Name = connectionString.Name,
 						ConnectionString = connectionString.ConnectionString,
@@ -63,7 +63,7 @@ namespace AC.Data.ConnString.Common
 			}
 			catch(Exception exception)
 			{
-				string errorMsg = string.Format("[ConfigConnStringCreator.CreateConnStrings] Error:{0}", exception.Message);
+				string errorMsg = string.Format("[ConnStringCreatorOfConfig.CreateConnStrings] Error:{0}", exception.Message);
 				logger.Error(errorMsg);
 				throw new ConnStringCreateException(errorMsg, exception);
 			}
@@ -72,12 +72,12 @@ namespace AC.Data.ConnString.Common
 		#endregion
 
 		/// <summary>
-		/// Create a instance of class <see cref="ConfigConnStringCreator"/>
+		/// Create a instance of class <see cref="ConnStringCreatorOfConfig"/>
 		/// </summary>
 		/// <returns></returns>
-		public static ConfigConnStringCreator Create()
+		public static ConnStringCreatorOfConfig Create()
 		{
-			return new ConfigConnStringCreator();
+			return new ConnStringCreatorOfConfig();
 		}
 
 		/// <summary>
@@ -86,7 +86,7 @@ namespace AC.Data.ConnString.Common
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return typeof (ConfigConnStringCreator).ToString();
+			return typeof (ConnStringCreatorOfConfig).ToString();
 		}
 	}
 }

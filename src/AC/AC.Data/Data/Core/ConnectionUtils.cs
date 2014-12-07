@@ -13,7 +13,7 @@ namespace AC.Data.Core
 	{
 		#region Logging
 
-		private static readonly ILog logger = DbLogManager.GetConnectionStringLog();
+		private static readonly ILog logger = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 

@@ -3,9 +3,9 @@
 namespace AC.Data
 {
 	/// <summary>
-	/// WMS.Data 日志管理类
+	/// 日志管理类
 	/// </summary>
-	public class DbLogManager
+	public class DataLogManager
 	{
 		/// <summary>
 		/// 获取输出到ConnectionStringLog.txt文件的<see cref="ILog"/>

@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Code\Config\dbservers.xml" />
+    <Content Include="Code\Config\connectionStrings.xml" />
     <EmbeddedResource Include="Code\Helper\datatype.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

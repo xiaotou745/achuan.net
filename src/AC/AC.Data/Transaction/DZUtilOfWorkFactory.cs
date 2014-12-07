@@ -1,4 +1,4 @@
-﻿using AC.Data.ConnString.Common;
+﻿using AC.Data.ConnString;
 using AC.Transaction.Common;
 
 namespace AC.Transaction

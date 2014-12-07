@@ -2,7 +2,7 @@
 using Common.Logging;
 using AC.Util;
 
-namespace AC.Data.ConnString.Common
+namespace AC.Data.ConnString
 {
 	/// <summary>
 	/// 连接字符串工厂类
@@ -11,7 +11,7 @@ namespace AC.Data.ConnString.Common
 	{
 		#region Logger Definition.
 
-		private static readonly ILog logger = DbLogManager.GetConnectionStringLog();
+		private static readonly ILog logger = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 

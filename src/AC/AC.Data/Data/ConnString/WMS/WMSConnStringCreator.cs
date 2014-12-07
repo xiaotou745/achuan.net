@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using AC.Dao;
-using AC.Data.ConnString.Common;
+using AC.Data.ConnString.Config;
 using AC.Data.Generic;
 using Common.Logging;
 using AC.Security;
@@ -40,7 +40,7 @@ namespace AC.Data.ConnString.WMS
 	{
 		#region Logger Definition
 
-		private readonly ILog logger = DbLogManager.GetConnectionStringLog();
+		private readonly ILog logger = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 
@@ -80,7 +80,7 @@ from WMSDatabases wd(nolock)";
 				string connName = IsDebug ? "dbConfigConnStringTest" : "dbConfigConnString";
 
 				IConnectionString configConnString =
-					ConnectionStringFactory.Create(ConfigConnStringCreator.Create()).GetConnectionString(connName);
+					ConnectionStringFactory.Create(ConnStringCreatorOfConfig.Create()).GetConnectionString(connName);
 				if (configConnString == null)
 				{
 					throw new ConnStringCreateException(string.Format("[WMSConnStringCreator.ConfigConnString]配置文件中连接字符串{0}没有进行设置，请设置后重试.", connName));

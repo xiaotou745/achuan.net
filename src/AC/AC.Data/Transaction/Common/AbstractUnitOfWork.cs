@@ -17,7 +17,7 @@ namespace AC.Transaction.Common
 		/// <summary>
 		/// get the <see cref="ILog"/> with a WYC.Data.txt file appender
 		/// </summary>
-		protected static readonly ILog Logger = DbLogManager.GetConnectionStringLog();
+		protected static readonly ILog Logger = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 

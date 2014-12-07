@@ -1,6 +1,4 @@
-﻿using AC.Data.ConnString.Common;
-
-namespace AC.Data.ConnString.WMS
+﻿namespace AC.Data.ConnString.WMS
 {
 	/// <summary>
 	/// 表示Vancl.WMS中的连接字符串格式

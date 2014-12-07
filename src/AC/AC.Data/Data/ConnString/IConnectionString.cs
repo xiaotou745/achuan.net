@@ -1,4 +1,4 @@
-namespace AC.Data.ConnString.Common
+namespace AC.Data.ConnString
 {
 	/// <summary>
 	/// ConnectionString definition class.

@@ -57,18 +57,20 @@
     <Compile Include="Dao\TransactionTimeoutException.cs" />
     <Compile Include="Dao\TypeMismatchDataAccessException.cs" />
     <Compile Include="Data\AbstractDaoBase.cs" />
-    <Compile Include="Data\ConnString\Common\ConfigConnectionString.cs" />
-    <Compile Include="Data\ConnString\Common\ConfigConnStringCreator.cs" />
-    <Compile Include="Data\ConnString\Common\ConnectionStringFactory.cs" />
-    <Compile Include="Data\ConnString\Common\ConnStringUtil.cs" />
-    <Compile Include="Data\ConnString\Common\IConnectionString.cs" />
-    <Compile Include="Data\ConnString\Common\IConnectionStringCreator.cs" />
+    <Compile Include="Data\ConnString\Config\ConnStringOfConfig.cs" />
+    <Compile Include="Data\ConnString\Config\ConnStringCreatorOfConfig.cs" />
+    <Compile Include="Data\ConnString\ConnectionStringFactory.cs" />
+    <Compile Include="Data\ConnString\ConnStringUtil.cs" />
+    <Compile Include="Data\ConnString\IConnectionString.cs" />
+    <Compile Include="Data\ConnString\IConnectionStringCreator.cs" />
     <Compile Include="Data\ConnString\DatabaseType.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnectionString.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnectionStrings.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnStringCreator.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnStringSynchronizationManager.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnStringUtil.cs" />
+    <Compile Include="Data\ConnString\Xml\ConnStringCreatorOfXml.cs" />
+    <Compile Include="Data\ConnString\Xml\ConnStringOfXml.cs" />
     <Compile Include="Data\Core\ConnectionHolder.cs" />
     <Compile Include="Data\Core\ConnectionTxPair.cs" />
     <Compile Include="Data\Core\ConnectionUtils.cs" />
@@ -81,7 +83,7 @@
     <Compile Include="Data\Core\TransactionSynchronizationManager.cs" />
     <Compile Include="Data\DaoBaseOfWMS.cs" />
     <Compile Include="Data\DblHelper.cs" />
-    <Compile Include="Data\DbLogManager.cs" />
+    <Compile Include="Data\DataLogManager.cs" />
     <Compile Include="Data\Generic\IResultSetExtractor.cs" />
     <Compile Include="Data\Generic\IRowMapper.cs" />
     <Compile Include="Data\Generic\RowMapperResultSetExtractor.cs" />
@@ -111,6 +113,12 @@
       <Project>{fdf6b367-6e74-4e7e-bea8-fd53d6278c9a}</Project>
       <Name>AC.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\ConnString\Xml\connectionStrings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\ConnString\Common\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

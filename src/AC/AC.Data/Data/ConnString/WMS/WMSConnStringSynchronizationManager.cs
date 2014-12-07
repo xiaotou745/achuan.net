@@ -14,7 +14,7 @@ namespace AC.Data.ConnString.WMS
 	{
 		#region Logging
 
-		private static readonly ILog log = DbLogManager.GetConnectionStringLog();
+		private static readonly ILog log = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 

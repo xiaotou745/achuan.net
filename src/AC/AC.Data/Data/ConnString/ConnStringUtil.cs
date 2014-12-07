@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using AC.Data.ConnString.Config;
 using Common.Logging;
 using AC.Security;
 using AC.Util;
 
-namespace AC.Data.ConnString.Common
+namespace AC.Data.ConnString
 {
     /// <summary>
     /// 
@@ -40,7 +41,7 @@ namespace AC.Data.ConnString.Common
 
         #region Logger Definition.
 
-        private static readonly ILog Logger = DbLogManager.GetConnectionStringLog();
+        private static readonly ILog Logger = DataLogManager.GetConnectionStringLog();
 
         #endregion
 
@@ -65,7 +66,7 @@ namespace AC.Data.ConnString.Common
                         Logger.InfoFormat("第{0}次获取连接字符串开始...", getConnectionCounter + 1);
                         lock (DbListObj)
                         {
-                            _lstConnStrings = ConnectionStringFactory.Create(ConfigConnStringCreator.Create())
+                            _lstConnStrings = ConnectionStringFactory.Create(ConnStringCreatorOfConfig.Create())
                                 .GetConnectionStrings();
 
                             if (_lstConnStrings.Count == 0)

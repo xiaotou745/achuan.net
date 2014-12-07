@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AC.Data.ConnString.Common
+namespace AC.Data.ConnString
 {
 	/// <summary>
 	/// 创建ConnString接口

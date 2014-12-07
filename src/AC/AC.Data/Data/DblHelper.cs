@@ -33,7 +33,7 @@ namespace AC.Data
 		/// <summary>
 		/// ConnectionStringLog.txt Logger
 		/// </summary>
-		protected readonly ILog logger = DbLogManager.GetConnectionStringLog();
+		protected readonly ILog logger = DataLogManager.GetConnectionStringLog();
 
 		#endregion
 

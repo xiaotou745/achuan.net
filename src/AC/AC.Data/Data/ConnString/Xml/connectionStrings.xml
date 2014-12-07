@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<connectionStrings>
+  <connectionString name="DB-USER-READ"
+                    isDefault="true"
+                    dbServer="DB-USER-READ.VANCLDB.COM"
+                    connectionString="Integrated Security=SSPI;Data Source=DB-USER-READ.VANCLDB.COM;Initial Catalog=master"
+                    providerName="System.Data.SqlClient">
+  </connectionString>
+  <connectionString name="PEK7-DEV-02"
+                    isDefault="false"
+                    dbServer="PEK7-DEV-02.vancloa.cn"
+                    connectionString="server=PEK7-DEV-02.vancloa.cn;uid=devuser;pwd=24E7E0C8-16D4-4C6C-8E7E-3741A97E4486;database=SCM"
+                    providerName="System.Data.SqlClient">
+  </connectionString>
+</connectionStrings>
