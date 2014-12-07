@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using AC.Data.ConnString.Config;
+using AC.Util;
 using Common.Logging;
 
 namespace AC.Data.ConnString.Xml
@@ -10,7 +11,7 @@ namespace AC.Data.ConnString.Xml
     /// <summary>
     /// 用来创建Xml配置文件中的定义的字符串
     /// </summary>
-    internal class ConnStringCreatorOfXml : IConnectionStringCreator
+    public class ConnStringCreatorOfXml : IConnectionStringCreator
     {
         #region Logger Definition
 
@@ -30,6 +31,14 @@ namespace AC.Data.ConnString.Xml
         /// </summary>
         private List<IConnectionString> lstConnStrings;
 
+        /// <summary>
+        /// 获取web.config中配置的文件连接字符串xml配置文件路径
+        /// </summary>
+        protected string XmlFilePath
+        {
+            get { return ConfigUtils.GetConfigValue("ConnStringConfigPath", string.Empty); }
+        }
+
         #endregion
 
         #region Private Constructor.
@@ -39,6 +48,24 @@ namespace AC.Data.ConnString.Xml
         /// </summary>
         private ConnStringCreatorOfXml()
         {
+        }
+
+        /// <summary>
+        /// 默认从web.config中读取配置文件
+        /// </summary>
+        /// <returns>返回一个<see cref="ConnStringCreatorOfXml"/>对象</returns>
+        public static ConnStringCreatorOfXml Create()
+        {
+            var connStringCreatorOfXml = new ConnStringCreatorOfXml();
+            if (string.IsNullOrEmpty(connStringCreatorOfXml.XmlFilePath))
+            {
+                connStringCreatorOfXml.lstConnStrings = new List<IConnectionString>();
+            }
+            else
+            {
+                connStringCreatorOfXml.Init(connStringCreatorOfXml.XmlFilePath);
+            }
+            return connStringCreatorOfXml;
         }
 
         /// <summary>

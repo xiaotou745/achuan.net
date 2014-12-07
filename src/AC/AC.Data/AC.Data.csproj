@@ -64,9 +64,9 @@
     <Compile Include="Data\ConnString\IConnectionString.cs" />
     <Compile Include="Data\ConnString\IConnectionStringCreator.cs" />
     <Compile Include="Data\ConnString\DatabaseType.cs" />
-    <Compile Include="Data\ConnString\WMS\WMSConnectionString.cs" />
+    <Compile Include="Data\ConnString\WMS\ConnStringOfWMS.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnectionStrings.cs" />
-    <Compile Include="Data\ConnString\WMS\WMSConnStringCreator.cs" />
+    <Compile Include="Data\ConnString\WMS\ConnStringCreatorOfWMS.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnStringSynchronizationManager.cs" />
     <Compile Include="Data\ConnString\WMS\WMSConnStringUtil.cs" />
     <Compile Include="Data\ConnString\Xml\ConnStringCreatorOfXml.cs" />
@@ -117,9 +117,7 @@
   <ItemGroup>
     <Content Include="Data\ConnString\Xml\connectionStrings.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\ConnString\Common\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -3,7 +3,7 @@
 	/// <summary>
 	/// 表示Vancl.WMS中的连接字符串格式
 	/// </summary>
-	public class WMSConnectionString : IConnectionString
+	public class ConnStringOfWMS : IConnectionString
 	{
 		private string name;
 
@@ -69,7 +69,7 @@
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return string.Format("WMSConnectionString:Name:{0} WarehouseId:{1} DbType:{2} EnumValue:{3}",
+			return string.Format("ConnStringOfWMS:Name:{0} WarehouseId:{1} DbType:{2} EnumValue:{3}",
 			                     Name, WarehouseId, DatabaseType, EnumValue);
 		}
 	}

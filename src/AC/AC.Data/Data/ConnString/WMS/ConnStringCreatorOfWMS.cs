@@ -36,7 +36,7 @@ namespace AC.Data.ConnString.WMS
 	/// </appSettings>
 	/// </code>
 	/// </example>
-	public class WMSConnStringCreator : IConnectionStringCreator
+	public class ConnStringCreatorOfWMS : IConnectionStringCreator
 	{
 		#region Logger Definition
 
@@ -50,7 +50,7 @@ from WMSDatabases wd(nolock)";
 
 		#region Private Constructor.
 
-		private WMSConnStringCreator()
+		private ConnStringCreatorOfWMS()
 		{
 		}
 
@@ -79,11 +79,11 @@ from WMSDatabases wd(nolock)";
 			{
 				string connName = IsDebug ? "dbConfigConnStringTest" : "dbConfigConnString";
 
-				IConnectionString configConnString =
-					ConnectionStringFactory.Create(ConnStringCreatorOfConfig.Create()).GetConnectionString(connName);
+			    IConnectionString configConnString = ConnectionStringFactory.Create(ConnStringCreatorOfConfig.Create())
+			                                                                .GetConnectionString(connName);
 				if (configConnString == null)
 				{
-					throw new ConnStringCreateException(string.Format("[WMSConnStringCreator.ConfigConnString]配置文件中连接字符串{0}没有进行设置，请设置后重试.", connName));
+					throw new ConnStringCreateException(string.Format("[ConnStringCreatorOfWMS.ConfigConnString]配置文件中连接字符串{0}没有进行设置，请设置后重试.", connName));
 				}
 				return configConnString;
 			}
@@ -104,8 +104,8 @@ from WMSDatabases wd(nolock)";
 				var dbHelper = new DbHelper(ConfigConnString.ProviderName);
 				string connString = DES.Decrypt3DES(ConfigConnString.ConnectionString);
 
-				IList<WMSConnectionString> lstWMSConnStrings = dbHelper.QueryWithRowMapper(connString, SELECT_SQL,
-				                                                                           new WMSConnStringRowMapper());
+			    IList<ConnStringOfWMS> lstWMSConnStrings = dbHelper.QueryWithRowMapper(connString, SELECT_SQL,
+			                                                                           new WMSConnStringRowMapper());
 
 				logger.Info("Execute sql by DbHelper:" + SELECT_SQL );
 				if(logger.IsDebugEnabled)
@@ -114,7 +114,7 @@ from WMSDatabases wd(nolock)";
 				}
 
 				IList<IConnectionString> results = new List<IConnectionString>();
-				foreach (WMSConnectionString wmsConnetionString in lstWMSConnStrings)
+				foreach (ConnStringOfWMS wmsConnetionString in lstWMSConnStrings)
 				{
 					results.Add(wmsConnetionString);
 				}
@@ -133,7 +133,7 @@ from WMSDatabases wd(nolock)";
 			}
 			catch (Exception exception)
 			{
-				string errorMsg = string.Format("[WMSConnStringCreator.CreateConnStrings] Error:{0}", exception.Message);
+				string errorMsg = string.Format("[ConnStringCreatorOfWMS.CreateConnStrings] Error:{0}", exception.Message);
 				logger.Error(errorMsg);
 				throw new ConnStringCreateException(errorMsg, exception);
 			}
@@ -142,23 +142,23 @@ from WMSDatabases wd(nolock)";
 		#endregion
 
 		/// <summary>
-		/// Create a instance of the class <see cref="WMSConnStringCreator"/>
+		/// Create a instance of the class <see cref="ConnStringCreatorOfWMS"/>
 		/// </summary>
-		/// <returns>returns  a instance of the class <see cref="WMSConnStringCreator"/></returns>
-		public static WMSConnStringCreator Create()
+		/// <returns>returns  a instance of the class <see cref="ConnStringCreatorOfWMS"/></returns>
+		public static ConnStringCreatorOfWMS Create()
 		{
-			return new WMSConnStringCreator();
+			return new ConnStringCreatorOfWMS();
 		}
 
 		#region Nested type: WMSConnStringRowMapper
 
-		private class WMSConnStringRowMapper : IDataTableRowMapper<WMSConnectionString>
+		private class WMSConnStringRowMapper : IDataTableRowMapper<ConnStringOfWMS>
 		{
-			#region IDataTableRowMapper<WMSConnectionString> Members
+			#region IDataTableRowMapper<ConnStringOfWMS> Members
 
-			public WMSConnectionString MapRow(DataRow dataRow)
+			public ConnStringOfWMS MapRow(DataRow dataRow)
 			{
-				var connString = new WMSConnectionString();
+				var connString = new ConnStringOfWMS();
 
 				connString.ConnectionString = DES.Decrypt3DES(dataRow["ConnectionString"].ToString());
 				connString.DatabaseName = dataRow["DatabaseName"].ToString();

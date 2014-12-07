@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using AC.Data.ConnString.Config;
-using Common.Logging;
 using AC.Security;
 using AC.Util;
+using Common.Logging;
 
 namespace AC.Data.ConnString
 {
@@ -14,11 +14,17 @@ namespace AC.Data.ConnString
     /// </summary>
     public class ConnStringUtil
     {
+        #region Private Instances or Fields
         /// <summary>
         /// 重试次数
         /// </summary>
         private const int RETRY_COUNT = 5;
-        private static object obj = new object();//对象同步 许亚修改2014.3.14
+
+        /// <summary>
+        /// 线程锁？
+        /// </summary>
+        private static readonly object obj = new object(); 
+
         /// <summary>
         /// [key:connStringName,value:connectionString]
         /// </summary>
@@ -37,7 +43,9 @@ namespace AC.Data.ConnString
         /// <summary>
         /// the WMS Connection Strings.
         /// </summary>
-        private static IList<IConnectionString> _lstConnStrings;
+        private static IList<IConnectionString> LstConnStrings;
+
+        #endregion
 
         #region Logger Definition.
 
@@ -52,7 +60,7 @@ namespace AC.Data.ConnString
         /// </summary>
         public static void InitConnList()
         {
-            lock (obj)//对象同步 许亚修改2014.3.14
+            lock (obj) //对象同步 许亚修改2014.3.14
             {
                 //获取连接字符串是否成功
                 bool getConnectionSuccess = false;
@@ -66,10 +74,10 @@ namespace AC.Data.ConnString
                         Logger.InfoFormat("第{0}次获取连接字符串开始...", getConnectionCounter + 1);
                         lock (DbListObj)
                         {
-                            _lstConnStrings = ConnectionStringFactory.Create(ConnStringCreatorOfConfig.Create())
-                                .GetConnectionStrings();
+                            LstConnStrings = ConnectionStringFactory.Create(ConnStringCreatorOfConfig.Create())
+                                                                     .GetConnectionStrings();
 
-                            if (_lstConnStrings.Count == 0)
+                            if (LstConnStrings.Count == 0)
                             {
                                 throw new Exception("没有要使用的字符串.请检查配置文件");
                             }
@@ -78,8 +86,8 @@ namespace AC.Data.ConnString
                             {
                                 var stringBuilder = new StringBuilder();
                                 stringBuilder.Append(string.Format("ConnectionString初始化完成，共有数据库连接字符串：{0}个",
-                                                                   _lstConnStrings.Count));
-                                foreach (IConnectionString databaseModel in _lstConnStrings)
+                                                                   LstConnStrings.Count));
+                                foreach (IConnectionString databaseModel in LstConnStrings)
                                 {
                                     stringBuilder.AppendLine(databaseModel.ToString());
                                 }
@@ -95,7 +103,7 @@ namespace AC.Data.ConnString
                         getConnectionCounter++;
                     }
                 }
-                foreach (IConnectionString connString in _lstConnStrings)
+                foreach (IConnectionString connString in LstConnStrings)
                 {
                     try
                     {
@@ -119,6 +127,7 @@ namespace AC.Data.ConnString
                 }
             }
         }
+
         private static bool IsPlainText(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -126,12 +135,13 @@ namespace AC.Data.ConnString
 
             return text.Contains(";");
         }
+
         /// <summary>
         /// 如果没有初始化，则初始化之
         /// </summary>
         private static void CheckedInited()
         {
-            if (_lstConnStrings == null)
+            if (LstConnStrings == null)
             {
                 Logger.Info("ConnectionStringUtil not be initional, init it.");
                 InitConnList();
@@ -147,7 +157,7 @@ namespace AC.Data.ConnString
         public static IList<IConnectionString> GetAllList()
         {
             CheckedInited();
-            return _lstConnStrings;
+            return LstConnStrings;
         }
 
         /// <summary>
@@ -166,7 +176,7 @@ namespace AC.Data.ConnString
                 return ProviderNameCache[connName];
             }
 
-            foreach (IConnectionString connString in _lstConnStrings)
+            foreach (IConnectionString connString in LstConnStrings)
             {
                 if (connString.Name == connName)
                 {
@@ -195,7 +205,7 @@ namespace AC.Data.ConnString
                 return ConnStringCache[connName];
             }
 
-            foreach (IConnectionString connString in _lstConnStrings)
+            foreach (IConnectionString connString in LstConnStrings)
             {
                 if (connString.Name == connName)
                 {

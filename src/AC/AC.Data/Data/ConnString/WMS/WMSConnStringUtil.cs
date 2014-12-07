@@ -44,7 +44,7 @@ namespace AC.Data.ConnString.WMS
 		/// <summary>
 		/// the WMS Connection Strings.
 		/// </summary>
-		private static IList<WMSConnectionString> lstWMSConnStrings;
+		private static IList<ConnStringOfWMS> lstWMSConnStrings;
 
 		#region Logger Definition.
 
@@ -71,14 +71,14 @@ namespace AC.Data.ConnString.WMS
 					logger.InfoFormat("第{0}次获取WMS连接字符串开始...", getConnectionCounter + 1);
 					lock (DbListObj)
 					{
-						IList<WMSConnectionString> lstWmsConnStrings = new List<WMSConnectionString>();
+						IList<ConnStringOfWMS> lstWmsConnStrings = new List<ConnStringOfWMS>();
 
-						IList<IConnectionString> connStringDefinitions = ConnectionStringFactory.Create(WMSConnStringCreator.Create())
+						IList<IConnectionString> connStringDefinitions = ConnectionStringFactory.Create(ConnStringCreatorOfWMS.Create())
 							.GetConnectionStrings();
 
 						foreach (IConnectionString connStringDefinition in connStringDefinitions)
 						{
-							lstWmsConnStrings.Add(connStringDefinition as WMSConnectionString);
+							lstWmsConnStrings.Add(connStringDefinition as ConnStringOfWMS);
 						}
 
 						if (lstWmsConnStrings.Count == 0)
@@ -92,7 +92,7 @@ namespace AC.Data.ConnString.WMS
 						{
 							var stringBuilder = new StringBuilder();
 							stringBuilder.Append(string.Format("WMSConnectionString初始化完成，共有数据库连接字符串：{0}个", lstWMSConnStrings.Count));
-							foreach (WMSConnectionString databaseModel in lstWMSConnStrings)
+							foreach (ConnStringOfWMS databaseModel in lstWMSConnStrings)
 							{
 								stringBuilder.AppendLine(databaseModel.ToString());
 							}
@@ -108,7 +108,7 @@ namespace AC.Data.ConnString.WMS
 					getConnectionCounter++;
 				}
 			}
-			foreach (WMSConnectionString wmsConnString in lstWMSConnStrings)
+			foreach (ConnStringOfWMS wmsConnString in lstWMSConnStrings)
 			{
 				if (!connStringCache.ContainsKey(wmsConnString.Name))
 				{
@@ -150,7 +150,7 @@ namespace AC.Data.ConnString.WMS
 		/// 获取所有WMS连接字符串
 		/// </summary>
 		/// <returns></returns>
-		public static IList<WMSConnectionString> GetAllList()
+		public static IList<ConnStringOfWMS> GetAllList()
 		{
 			CheckedInited();
 			return lstWMSConnStrings;
