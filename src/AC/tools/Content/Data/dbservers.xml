@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <dbservers>
-  <dbserver servername="115.28.152.245" 
+  <dbserver servername="10.8.8.50_soa开发库" 
             dbtype="sqlserver"
-            connstring="Data Source=115.28.152.245; Initial Catalog=Sizom; Uid=artsizom;pwd=q1w2e3r$;">
+            connstring="Data Source=10.8.8.50; Initial Catalog=FoodkingdomCN_SoaAPI_Only; Uid=dev_master;pwd=dev_master;">
   </dbserver>
-  <dbserver servername="115.28.152.245"
+  <dbserver servername="10.8.8.50_soa测试库"
             dbtype="mysql"
-            connstring="Data Source=115.28.152.245; Initial Catalog=Sizom; Uid=artsizom;pwd=q1w2e3r$;">
+            connstring="Data Source=10.8.8.50; Initial Catalog=FoodkingdomCN_SoaAPI; Uid=dev_master;pwd=dev_master;">
   </dbserver>
 </dbservers>
