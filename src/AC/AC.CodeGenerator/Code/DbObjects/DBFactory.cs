@@ -40,6 +40,11 @@ namespace AC.Code.DbObjects
             return (IDbObject) dbObj;
         }
 
+        /// <summary>
+        /// 根据数据库类型获取dbobj对象
+        /// </summary>
+        /// <param name="dbType"></param>
+        /// <returns></returns>
         private static object GetDbObj(DbType dbType)
         {
             object dbObj = Cache.GetObject(dbType);
@@ -48,7 +53,12 @@ namespace AC.Code.DbObjects
                 switch (dbType)
                 {
                     case DbType.SQL2005:
+                    case DbType.SQL2000:
+                    case DbType.SQL2008:
                         dbObj = new DbObject();
+                        break;
+                    case DbType.MySql:
+                        dbObj = new DbObjectOfMySql();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("dbType");

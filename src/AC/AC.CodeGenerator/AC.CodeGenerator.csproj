@@ -60,6 +60,7 @@
     <Compile Include="Code\DbObjects\Cache.cs" />
     <Compile Include="Code\DbObjects\DBFactory.cs" />
     <Compile Include="Code\DbObjects\DbObject.cs" />
+    <Compile Include="Code\DbObjects\DbObjectOfMySql.cs" />
     <Compile Include="Code\DbObjects\DbType.cs" />
     <Compile Include="Code\DbObjects\IDbObject.cs" />
     <Compile Include="Code\Helper\CodeCommon.cs" />
@@ -85,6 +86,9 @@
   <ItemGroup>
     <Content Include="Code\Config\dbservers.xml" />
     <EmbeddedResource Include="Code\Helper\datatype.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CodeNew\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
