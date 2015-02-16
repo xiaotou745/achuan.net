@@ -5,5 +5,6 @@ namespace AC.Code.DbObjects
         SQL2000,
         SQL2005,
         SQL2008,
+        MySql,
     }
 }

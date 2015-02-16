@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using AC.Code.DbObjects;
@@ -6,7 +7,7 @@ using AC.Code.DbObjects;
 namespace AC.Code.Config
 {
     /// <summary>
-    /// 数据库设置类
+    /// 数据库设类置
     /// </summary>
     public class DbSettings
     {
@@ -75,8 +76,17 @@ namespace AC.Code.Config
             {
                 string servername = sectionNode.Attributes["servername"].Value;
                 string connstring = sectionNode.Attributes["connstring"].Value;
+                string dbType = sectionNode.Attributes["dbType"].Value;
+                if (string.IsNullOrEmpty(dbType))
+                {
+                    dbType = DbType.SQL2008.ToString();
+                }
 
-                lstDbSettings.Add(new DbSettings {ConnString = connstring, DbServer = servername});
+                lstDbSettings.Add(new DbSettings
+                {
+                    ConnString = connstring, DbServer = servername,
+                    DbType = (DbType)Enum.Parse(typeof(DbType),dbType),
+                });
             }
         }
 
