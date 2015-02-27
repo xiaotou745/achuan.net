@@ -375,6 +375,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="datatype.ini" />
+    <None Include="Properties\PublishProfiles\tools.etaoshi.com.pubxml" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Views\CodeGenerate\Index.cshtml" />
