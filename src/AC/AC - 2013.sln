@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 13.00
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AC.Core", "AC.Core\AC.Core.csproj", "{FDF6B367-6E74-4E7E-BEA8-FD53D6278C9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AC.Data", "AC.Data\AC.Data.csproj", "{FA85394F-AC26-4F5F-B192-CB3B96CC4C18}"
@@ -44,8 +46,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{FA85394F-AC26-4F5F-B192-CB3B96CC4C18} = {062D7A1C-D26C-48EC-BEE4-48660B6B5326}
 		{32A0597B-29EC-421E-ACEE-790085E652F1} = {062D7A1C-D26C-48EC-BEE4-48660B6B5326}
 		{FDF6B367-6E74-4E7E-BEA8-FD53D6278C9A} = {062D7A1C-D26C-48EC-BEE4-48660B6B5326}
-		{FA85394F-AC26-4F5F-B192-CB3B96CC4C18} = {062D7A1C-D26C-48EC-BEE4-48660B6B5326}
 	EndGlobalSection
 EndGlobal

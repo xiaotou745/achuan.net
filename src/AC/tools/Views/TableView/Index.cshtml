@@ -2,6 +2,9 @@
     var lstDbServers = ViewData["DbServers"] as IList<string>;
     string serverName = ViewData["DbServer"].ToString();
     string dbName = ViewData["DbName"].ToString();
+
+    string typeHtml = ViewData["TypeHtml"].ToString();
+    
     string dbNameSource = ViewData["DbNameSource"].ToString();
     string dbTableSource = ViewData["DbTableSource"].ToString();
 }
@@ -18,16 +21,109 @@
             }
 
             $("#dbServer").on("change", dbServerChanged);
-            $("#txtDbName").on("keydown", dbNameKeydown);
+            $("#txtDbName").on("keydown", function (evt) {
+                evt = (evt) ? evt : ((window.event) ? window.event : "");
+                var keyCode = evt.keyCode ? evt.keyCode : (evt.which ? evt.which : evt.charCode);
+                if (keyCode != 13) {
+                    return;
+                }
+                tableNameKeydown();
+            });
             $("#txtTableName").on("keydown", tableNameKeydown);
-        });
 
+            $(document).delegate("td[name='dbname'] a", "click", function () {
+                var dbname = $(this).text();
+                $("#txtDbName").val(dbname);
+                $("#dbSelector").submit();
+            })
+
+            $(document).delegate("td.J_tableName a", "click", function () {
+                var tableName = $(this).text();
+                $("#txtTableName").val(tableName);
+                tableNameKeydown();
+            })
+
+            $("#returnTableList").bind("click", function () {
+                $("#txtTableName").val("");
+                $("#dbSelector").submit();
+            })
+
+            $(document).delegate("td.J_editTableDesc a", "click", function () {
+                var tableName = $(this).parent().siblings("[name='tableName']").text();
+                var desc = $(this).parent().prev().text();
+
+                $("#lblTableName").val(tableName);
+                $("#lblColumnName").val("");
+                $("#txtDesc").val(desc);
+                $("#hidDescType").val(0);
+
+                $("#modalDescEdit").modal({
+                    backdrop: true,
+                    keyboard: true,
+                    show: true
+                });
+            })
+
+            $(document).delegate("td.J_editColumnDesc a", "click", function () {
+                var tableName = $("#txtTableName").val();
+                var columnName = $(this).parent().siblings(":eq(1)").text();
+                var desc = $(this).parent().prev().text();
+
+                $("#lblTableName").val(tableName);
+                $("#lblColumnName").val(columnName);
+                $("#txtDesc").val(desc);
+                $("#hidDescType").val(1);
+
+                $("#modalDescEdit").modal({
+                    backdrop: true,
+                    keyboard: true,
+                    show: true
+                });
+            })
+
+            $("#btnSaveDesc").bind("click", function () {
+                var dbServer = $("#dbServer").val();
+                var dbName = $("#txtDbName").val()
+                var tableName = $("#lblTableName").val();
+                var columnName = $("#lblColumnName").val();
+                var desc = $("#txtDesc").val();
+
+                $.blockUI();
+                $.post(
+                "/TableView/UpdateDesc",
+                { dbServer: dbServer, dbName: dbName, dbTable: tableName, columnName: columnName, desc: desc },
+                function (data) {
+                    if (data) {
+                        var descType = $("#hidDescType").val();
+                        if (descType == 0) {
+                            $("#dbSelector").submit();
+                        } else {
+                            tableNameKeydown();
+                        }
+                    }
+                    $("#modalDescEdit").modal("hide");
+                    $.unblockUI();
+                }
+            );
+            })
+        });
+        //弹出生成代码配置对话框
+        function showDescEditDialog() {
+            $("#lblName").val($("#txtTableName").val());
+            $("#generateCodeSettings").modal({
+                backdrop: true,
+                keyboard: true,
+                show: true
+            });
+        }
+        //服务器选择事件
         function dbServerChanged() {
             $("#txtDbName").val("");
             $("#txtTableName").val("");
             $("#dbSelector").submit();
         }
 
+        //数据库名称回车事件
         function dbNameKeydown(evt) {
             evt = (evt) ? evt : ((window.event) ? window.event : "");
             var keyCode = evt.keyCode ? evt.keyCode : (evt.which ? evt.which : evt.charCode);
@@ -43,12 +139,8 @@
             $("#dbSelector").submit();
         }
 
+        //表名回车事件
         function tableNameKeydown(evt) {
-            evt = (evt) ? evt : ((window.event) ? window.event : "");
-            var keyCode = evt.keyCode ? evt.keyCode : (evt.which ? evt.which : evt.charCode);
-            if (keyCode != 13) {
-                return;
-            }
             var dbTableName = $("#txtTableName").val();
             if (dbTableName == "") {
                 $("#txtTableName").focus();
@@ -91,7 +183,7 @@
                 <div class="controls">
                     <div class="input-append" id="divtest">
                         <span class="add-on"><i class="icon-search"></i></span>
-                        <input type="text" id="txtDbName" name="dbName"value="@dbName" data-provide="typeahead" data-items="100" data-source="@dbNameSource"/>
+                        <input type="text" id="txtDbName" name="dbName"value="@dbName" data-provide="typeahead" data-items="100" data-source="@dbNameSource" placeholder="输入数据库名并回车"/>
                     </div>
                 </div>
             </div>
@@ -101,9 +193,10 @@
                 <div class="controls">
                     <div class="input-append">
                         <span class="add-on"><i class="icon-search"></i></span>
-                        <input type="text" id="txtTableName" data-provide="typeahead" data-items="50" data-source="@dbTableSource"/>
+                        <input type="text" id="txtTableName" data-provide="typeahead" data-items="50" data-source="@dbTableSource" placeholder="输入表名并回车"/>
                     </div>
                 </div>
+                <a id="returnTableList" href="javascript:;">返回表列表</a>
             </div>
         </fieldset>
     </form>
@@ -111,5 +204,47 @@
         
 <div class="span8">
     <div id="contents">
+        @Html.Raw(typeHtml)
     </div>
 </div>
+
+
+<div id="modalDescEdit" class="modal hide fade">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>编辑描述</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <fieldset>
+                <input type="hidden" value="" id="hidDescType" />
+                <div class="control-group">
+                    <label class="control-label">表名称：</label>
+                    <div class="controls">
+                        <input type="text" class="disabled uneditable-input" id="lblTableName" disabled="disabled" />
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">列名称：</label>
+                    <div class="controls">
+                        <input type="text" class="disabled uneditable-input" id="lblColumnName" disabled="disabled" />
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label" for="txtDesc">描述：</label>
+                    <div class="controls">
+                        <input type="text" id="txtDesc" placeholder="输入描述信息" />
+                        <p class="help-inline"></p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a id="btnSaveDesc" href="javascript:" class="btn btn-large">保存</a>
+        <a href="javascript:" class="btn btn-large" data-dismiss="modal">关闭</a>
+    </div>
+</div>
+

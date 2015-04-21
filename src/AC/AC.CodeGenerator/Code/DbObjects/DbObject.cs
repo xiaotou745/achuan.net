@@ -469,31 +469,46 @@ order by xtype, [name]";
         public List<TableInfo> GetTablesInfo(string dbName)
         {
             const string strSql = @"
-select  sysobjects.[name] name, sysusers.name cuser, sysobjects.xtype type,
-        sysobjects.crdate dates
-from    sysobjects ,
-        sysusers
-where   sysusers.uid = sysobjects.uid
-        and sysobjects.xtype = 'U'
-        and sysobjects.[name] <> 'dtproperties'
-order by sysobjects.[name] ";
+select s.name,s2.name cuser,s.xtype type,s.crdate dates,isnull(ep.value,'') 'desc'
+from sys.sysobjects s(nolock)
+	join sys.sysusers s2(nolock) on s2.uid=s.uid
+	left join sys.extended_properties ep(nolock) on s.id = ep.major_id and ep.minor_id=0
+where s.xtype='U' and s.name<>'dtproperties'
+order by s.name ";
             //strSql.Append("order by sysobjects.id");
             //return Query(DbName,strSql.ToString()).Tables[0];
 
             var tablist = new List<TableInfo>();
-            SqlDataReader reader = ExecuteReader(dbName, strSql);
-            while (reader.Read())
+
+            DataSet dataSet = Query(dbName, strSql);
+            if (dataSet == null || dataSet.Tables.Count == 0)
             {
-                var tab = new TableInfo
-                              {
-                                  TabName = reader.GetString(0),
-                                  TabDate = reader.GetValue(3).ToString(),
-                                  TabType = reader.GetString(2),
-                                  TabUser = reader.GetString(1)
-                              };
+                return tablist;
+            }
+            foreach (DataRow dataRow in dataSet.Tables[0].Rows)
+            {
+                var tab = new TableInfo();
+                tab.TabName = dataRow["name"].ToString();
+                tab.TabDate = dataRow["dates"].ToString();
+                tab.TabType = dataRow["type"].ToString();
+                tab.TabUser = dataRow["cuser"].ToString();
+                tab.TabDesc = dataRow["desc"].ToString();
                 tablist.Add(tab);
             }
-            reader.Close();
+            //SqlDataReader reader = ExecuteReader(dbName, strSql);
+            //while (reader.Read())
+            //{
+            //    var tab = new TableInfo
+            //                  {
+            //                      TabName = reader.GetString(0),
+            //                      TabUser = reader.GetString(1),
+            //                      TabType = reader.GetString(2),
+            //                      TabDate = reader.GetValue(3).ToString(),
+            //                      TabDesc = reader.GetString(4),
+            //                  };
+            //    tablist.Add(tab);
+            //}
+            //reader.Close();
             return tablist;
         }
 
@@ -1145,6 +1160,51 @@ where   O.name = N'" + tableName + "'"
             }
         }
 
+        public bool UpdateProperty(string dbName, string tableName, string columnName, string desc)
+        {
+            try
+            {
+                IDataParameter[] parameters = getDbParamaters(dbName, tableName, columnName, desc);
+                RunProcedure(dbName, "sp_updateextendedproperty", parameters, "ds");
+            }
+            catch (Exception ex)
+            {
+                IDataParameter[] parameters = getDbParamaters(dbName, tableName, columnName, desc);
+                RunProcedure(dbName, "sp_addextendedproperty", parameters, "ds");
+            }
+            return true;
+        }
+        private IDataParameter[] getDbParamaters(string dbName, string tableName, string columnName, string desc)
+        {
+            IDataParameter[] parameters =
+                {
+                    new SqlParameter("@name", SqlDbType.VarChar, 384),
+                    new SqlParameter("@value", SqlDbType.NVarChar, 384),
+                    new SqlParameter("@level0type", SqlDbType.NVarChar, 384),
+                    new SqlParameter("@level0name", SqlDbType.VarChar, 384),
+                    new SqlParameter("@level1type", SqlDbType.VarChar, 384),
+                    new SqlParameter("@level1name", SqlDbType.VarChar, 384),
+                    new SqlParameter("@level2type", SqlDbType.VarChar, 384),
+                    new SqlParameter("@level2name", SqlDbType.VarChar, 384),
+                };
+            parameters[0].Value = "MS_Description";
+            parameters[1].Value = desc;
+            parameters[2].Value = "SCHEMA";
+            parameters[3].Value = "dbo";
+            parameters[4].Value = "TABLE";
+            parameters[5].Value = tableName;
+            if (string.IsNullOrEmpty(columnName))
+            {
+                parameters[6].Value = null;
+                parameters[7].Value = null;
+            }
+            else
+            {
+                parameters[6].Value = "COLUMN";
+                parameters[7].Value = columnName;
+            }
+            return parameters;
+        }
         #endregion
     }
 }

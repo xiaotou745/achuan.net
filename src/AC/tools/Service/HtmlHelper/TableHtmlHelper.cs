@@ -349,9 +349,13 @@ namespace AC.Tools.Service.HtmlHelper
 
                     //添加class属性
                     string properties = string.Empty;
+                    if (!string.IsNullOrEmpty(rowItem.Name))
+                    {
+                        properties += " name='" + rowItem.Name + "'";
+                    }
                     if (!string.IsNullOrEmpty(rowItem.Class))
                     {
-                        properties = " class='" + rowItem.Class + "'";
+                        properties += " class='" + rowItem.Class + "'";
                     }
                     //添加Rowspan到td
                     if (!string.IsNullOrEmpty(rowItem.Rowspan))
@@ -370,7 +374,8 @@ namespace AC.Tools.Service.HtmlHelper
                     }
                     if (!string.IsNullOrEmpty(rowItem.AsLink) && bool.Parse(rowItem.AsLink))
                     {
-                        rowItem.Data = "<a href='" + rowItem.Data + "' target='_blank'>" + rowItem.Data + "</a>";
+                        var href = string.IsNullOrEmpty(rowItem.LinkHref) ? rowItem.Data : rowItem.LinkHref;
+                        rowItem.Data = "<a href='" + href + "' target='_blank'>" + rowItem.Data + "</a>";
                     }
                     //是否使用<code>
                     if (!string.IsNullOrEmpty(rowItem.UseCode) && bool.Parse(rowItem.UseCode))

@@ -126,5 +126,11 @@ where table_name='account'
         {
             throw new NotImplementedException();
         }
+
+
+        public bool UpdateProperty(string dbName, string tableName, string columnName, string desc)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

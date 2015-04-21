@@ -163,6 +163,7 @@ namespace AC.Code.DbObjects
         /// <returns></returns>
         bool RenameTable(string dbName, string oldName, string newName);
 
+        bool UpdateProperty(string dbName, string tableName, string columnName, string desc);
         /// <summary>
         /// É¾³ý±í
         /// </summary>	

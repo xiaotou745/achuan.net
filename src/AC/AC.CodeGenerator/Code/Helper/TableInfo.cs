@@ -36,5 +36,10 @@ namespace AC.Code.Helper
             set { _tabDate = value; }
             get { return _tabDate; }
         }
+
+        /// <summary>
+        /// ±íÃèÊö
+        /// </summary>
+        public string TabDesc { get; set; }
     }
 }
