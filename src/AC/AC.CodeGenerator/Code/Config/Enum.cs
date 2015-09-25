@@ -2,6 +2,11 @@ using System.ComponentModel;
 
 namespace AC.Code.Config
 {
+    public enum CodeType
+    {
+        CSharp=1,
+        Java=2,
+    }
     /// <summary>
     /// Dao实现方式
     /// DbHelper:使用自我封装的DbHelper形式

@@ -44,6 +44,11 @@ namespace AC.Code.Helper
 		    return DataTypeHelper.DbTypeToCS(dbtype);
 		}
 
+	    public static string DbTypeToJava(string dbtype)
+	    {
+	        return DataTypeHelper.DbTypeToJava(dbtype);
+	    }
+
 	    #endregion
 
 		#region 是否c#中的值类型

@@ -6,6 +6,70 @@ using AC.Code.IBuilder;
 
 namespace AC.Code.Builder
 {
+    public class DTOBuilder
+    {
+        private CodeGenerateConfig generateConfig;
+        private List<ColumnInfo> fieldList;
+
+        #region Create
+
+        private DTOBuilder()
+        {
+        }
+
+        public static DTOBuilder Create()
+        {
+            var dtoBuilder = new DTOBuilder();
+            return dtoBuilder;
+        }
+
+        public static DTOBuilder Create(CodeGenerateConfig codeGenerateConfig, List<ColumnInfo> fieldList)
+        {
+            var dtoBuilder = new DTOBuilder();
+            dtoBuilder.generateConfig = codeGenerateConfig;
+            dtoBuilder.fieldList = fieldList;
+            return dtoBuilder;
+        }
+
+        #endregion
+
+        #region Set
+
+        public DTOBuilder SetGenerateConfig(CodeGenerateConfig codeGenerateConfig)
+        {
+            generateConfig = codeGenerateConfig;
+            return this;
+        }
+
+        public DTOBuilder SetKeys(List<ColumnInfo> fieldList)
+        {
+            this.fieldList = fieldList;
+            return this;
+        }
+
+        #endregion
+
+        #region Get
+
+        public IBuilderDTO GetDTOCode()
+        {
+            if (generateConfig == null)
+            {
+                return null;
+            }
+            if (generateConfig.CodeType == CodeType.CSharp)
+            {
+                return new BuilderDTO(generateConfig, fieldList);
+            }
+            else if (generateConfig.CodeType == CodeType.Java)
+            {
+                return new JavaBuilder.BuilderDTO(generateConfig, fieldList);
+            }
+            return null;
+        }
+
+        #endregion
+    }
     public class BuilderDTO : IBuilderDTO
     {
         #region Properties

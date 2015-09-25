@@ -42,6 +42,48 @@
     <type name="timestamp" value="DateTime" />
     <type name="variant" value="object" />
   </section>
+  <section value="DbToJava">
+    <type name="varchar" value="String" />
+    <type name="varchar2" value="String" />
+    <type name="nvarchar" value="String" />
+    <type name="nvarchar2" value="String" />
+    <type name="char" value="String" />
+    <type name="nchar" value="String" />
+    <type name="text" value="String" />
+    <type name="longtext" value="String" />
+    <type name="ntext" value="String" />
+    <type name="string" value="String" />
+    <type name="date" value="Date" />
+    <type name="datetime" value="Date" />
+    <type name="smalldatetime" value="Date" />
+    <type name="smallint" value="Integer" />
+    <type name="single" value="Single" />
+    <type name="int" value="Integer" />
+    <type name="number" value="Integer" />
+    <type name="bigint" value="Long" />
+    <type name="tinyint" value="Integer" />
+    <type name="float" value="Double" />
+    <type name="numeric" value="Double" />
+    <type name="decimal" value="Double" />
+    <type name="money" value="Double" />
+    <type name="smallmoney" value="Double" />
+    <type name="real" value="Double" />
+    <type name="bit" value="Boolean" />
+    <type name="binary" value="Byte[]" />
+    <type name="varbinary" value="Byte[]" />
+    <type name="image" value="Byte[]" />
+    <type name="raw" value="Byte[]" />
+    <type name="long" value="Byte[]" />
+    <type name="long raw" value="Byte[]" />
+    <type name="blob" value="Byte[]" />
+    <type name="bfile" value="Byte[]" />
+    <type name="uniqueidentifier" value="String" />
+    <type name="integer" value="Integer" />
+    <type name="double" value="Double" />
+    <type name="enum" value="Enum" />
+    <type name="timestamp" value="Date" />
+    <type name="variant" value="Object" />
+  </section>
   <section value="ToSQLProc">
     <type name="varchar" value="VarChar" />
     <type name="string" value="VarChar" />

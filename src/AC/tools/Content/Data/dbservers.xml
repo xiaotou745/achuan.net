@@ -1,12 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <dbservers>
-  <dbserver servername="127.0.0.1"
-            dbType=""
-            connstring="Data Source=127.0.0.1; Initial Catalog=WYC; Uid=sa;pwd=Vancl@123;">
-  </dbserver>
-  <dbserver servername="10.8.8.50_soa开发库" 
-            dbType=""
-            connstring="Data Source=10.8.8.50; Initial Catalog=FoodkingdomCN_SoaAPI_Only; Uid=dev_master;pwd=dev_master;">
+  <dbserver servername="10.8.8.50"
+          dbType=""
+          connstring="Data Source=10.8.8.50; Initial Catalog=FoodkingdomCN_SoaAPI_Only; Uid=dev_master;pwd=dev_master;">
   </dbserver>
   <dbserver servername="10.8.7.41"
             dbType=""

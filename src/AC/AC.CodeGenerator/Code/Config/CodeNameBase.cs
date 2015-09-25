@@ -7,6 +7,7 @@ namespace AC.Code.Config
     public class CodeNameFactory
     {
         private CodeLayer codeLayer;
+        private CodeType codeType;
 
         private CodeNameFactory()
         {
@@ -14,11 +15,20 @@ namespace AC.Code.Config
 
         public static CodeNameFactory Create(CodeLayer codeLayer)
         {
-            return new CodeNameFactory {codeLayer = codeLayer};
+            return new CodeNameFactory {codeLayer = codeLayer, codeType = CodeType.CSharp};
+        }
+
+        public static CodeNameFactory Create(CodeLayer codeLayer, CodeType codeType)
+        {
+            return new CodeNameFactory {codeLayer = codeLayer, codeType = codeType};
         }
 
         public CodeNameBase GetCodeName(string subNamespace, string modelName)
         {
+            if (codeType == CodeType.Java)
+            {
+                return new CodeNameOfJava(subNamespace, modelName);
+            }
             switch (codeLayer)
             {
                 case CodeLayer.ThreeLayer:
@@ -152,6 +162,123 @@ namespace AC.Code.Config
             }
             return sb.ToString();
         }
+    }
+
+    public class CodeNameOfJava : CodeNameBase
+    {
+        protected string ModelName;
+        protected string SubNamespace;
+
+        public CodeNameOfJava(string subNamespace, string modelName)
+        {
+            SubNamespace = subNamespace;
+            var sb = GetModelName(modelName);
+            ModelName = sb;
+        }
+
+        #region Service Name
+
+        /// <summary>
+        /// Service命名空间
+        /// </summary>
+        public override string ServiceNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                           ? @"DZ.Services"
+                           : string.Format("DZ.Services.{0}", SubNamespace);
+            }
+        }
+
+        public override string ServiceName
+        {
+            get { return "I" + ModelName + "Service"; }
+        }
+
+        #endregion
+
+        #region DTO Name
+
+        /// <summary>
+        /// Service命名空间
+        /// </summary>
+        public override string ServiceDTONamespace
+        {
+            get { return ServiceNamespace + ".DTO"; }
+        }
+
+        public override string ServiceDTOName
+        {
+            get { return ModelName; }
+        }
+
+        public override string ServiceQueryDTOName
+        {
+            get { return ModelName + "QueryInfo"; }
+        }
+
+        #endregion
+
+        #region Dao Name
+
+        /// <summary>
+        /// Service命名空间
+        /// </summary>
+        public override string DaoNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                           ? @"DZ.Dao"
+                           : string.Format("DZ.Dao.{0}", SubNamespace);
+            }
+        }
+
+        public override string DaoName
+        {
+            get { return ModelName + "Dao"; }
+        }
+
+        #endregion
+
+        #region ServiceImpl
+
+        public override string ServiceImplNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                           ? @"DZ.Services.Impl"
+                           : string.Format(@"DZ.Services.Impl.{0}", SubNamespace);
+            }
+        }
+
+        public override string ServiceImplName
+        {
+            get { return ModelName + "Service"; }
+        }
+
+        #endregion
+
+        #region Domain
+
+        public override string DomainNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                           ? @"DZ.Domain.Repository"
+                           : string.Format(@"DZ.Domain.Repository.{0}", SubNamespace);
+            }
+        }
+
+        public override string DomainName
+        {
+            get { return "I" + ModelName + "Repos"; }
+        }
+
+        #endregion
     }
 
     public class CodeNameOfServiceLayer : CodeNameBase

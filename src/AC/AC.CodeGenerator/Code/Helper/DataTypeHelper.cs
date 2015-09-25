@@ -56,6 +56,17 @@ namespace AC.Code.Helper
             return csType;
         }
 
+        public string DbTypeToJava(string dbtype)
+        {
+            string javaType = "String";
+            if (DatatypeDic["DbToJava"].ContainsKey(dbtype.ToLower().Trim()))
+            {
+                string val = DatatypeDic["DbToJava"][dbtype.ToLower().Trim()];
+                javaType = string.IsNullOrEmpty(val) ? dbtype.ToLower().Trim() : val;
+            }
+            return javaType;
+        }
+
         /// <summary>
         /// 是否c#中的值类型
         /// </summary>

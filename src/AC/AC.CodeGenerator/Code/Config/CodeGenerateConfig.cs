@@ -66,6 +66,17 @@ namespace AC.Code.Config
 
         #endregion
 
+        #region Java or C#
+
+        private CodeType codeType = CodeType.CSharp;
+
+        public CodeType CodeType
+        {
+            get { return codeType; }
+            set { codeType = value; }
+        }
+        #endregion
+
         #region CallStyle
 
         private string callStyleHashCode;

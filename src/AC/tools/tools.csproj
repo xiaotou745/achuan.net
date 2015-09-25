@@ -192,6 +192,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\TableViewModel.cs" />
+    <Compile Include="Models\CodeGenerateParams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\ExcelUtils.cs" />
     <Compile Include="Service\HtmlHelper\ColumnNames.cs" />
@@ -316,6 +317,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Common.js" />
+    <Content Include="Scripts\dbtools\codegenerate.js" />
     <Content Include="Scripts\grid.locale-cn.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
@@ -377,6 +379,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="datatype.ini" />
+    <None Include="Properties\PublishProfiles\tools.etaoshi.com.pubxml" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Views\CodeGenerate\Index.cshtml" />

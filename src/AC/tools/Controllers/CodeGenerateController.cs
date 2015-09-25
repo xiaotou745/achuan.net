@@ -57,7 +57,7 @@ namespace AC.Tools.Controllers
             string dbNameSelected = string.IsNullOrEmpty(Request["dbName"]) ? string.Empty : Request["dbName"];//当前选择的数据库，如果初始，则空；
             ViewData["DbName"] = dbNameSelected;
 
-            AC.Code.DbObjects.IDbObject dbObject = DbSetting.CreateDbObject(dbServerSelected);
+            IDbObject dbObject = DbSetting.CreateDbObject(dbServerSelected);
 
             ViewData["DbNameSource"] = JsonConvert.SerializeObject(dbObject.GetDBList());
 
@@ -254,14 +254,16 @@ namespace AC.Tools.Controllers
         }
 
         public ActionResult GenerateCode(string dbServer, string dbName, string tableName, string modelName,
-                                         string callStyle, string daoStyle, string codeLayer)
+                                         string callStyle, string daoStyle, string codeLayer,int codeType)
         {
+
             var codeGenerateConfig = new CodeGenerateConfig
                                          {
                                              CallStyleHashCode = callStyle,
                                              CodeLayerHashCode = codeLayer,
                                              DaoStyleHashCode = daoStyle,
-                                             ModelName = modelName
+                                             ModelName = modelName,
+                                             CodeType = (CodeType)Enum.Parse(typeof(CodeType),codeType.ToString())
                                          };
 
             IDbObject dbObj = DbSetting.CreateDbObject(dbServer);
@@ -292,7 +294,7 @@ namespace AC.Tools.Controllers
             string daoCode = daoBuilder.GetDaoCode();
 
             //Service DTO 代码生成
-            IBuilderDTO serviceDTOBuilder = new BuilderDTO(codeGenerateConfig, lstColumns);
+            IBuilderDTO serviceDTOBuilder = DTOBuilder.Create(codeGenerateConfig, lstColumns).GetDTOCode();
             string serviceDTOCode = serviceDTOBuilder.GetServiceDTOCode();
 
             //如果是Service五层架构，则继续生成Domain和ServiceImpl层
@@ -339,5 +341,6 @@ namespace AC.Tools.Controllers
                                 DaoCode = daoCode
                             });
         }
+
     }
 }
