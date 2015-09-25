@@ -57,7 +57,7 @@ namespace AC.Tools.Controllers
             string dbNameSelected = string.IsNullOrEmpty(Request["dbName"]) ? string.Empty : Request["dbName"];//当前选择的数据库，如果初始，则空；
             ViewData["DbName"] = dbNameSelected;
 
-            AC.Code.DbObjects.IDbObject dbObject = DbSetting.CreateDbObject(dbServerSelected);
+            IDbObject dbObject = DbSetting.CreateDbObject(dbServerSelected);
 
             ViewData["DbNameSource"] = JsonConvert.SerializeObject(dbObject.GetDBList());
 
@@ -338,6 +338,93 @@ namespace AC.Tools.Controllers
                                 ServiceCode = serviceCode,
                                 DaoCode = daoCode
                             });
+        }
+
+        public ActionResult GenerateJavaCode(string dbServer, string dbName, string tableName, string modelName,
+                                         string callStyle, string daoStyle, string codeLayer)
+        {
+            var codeGenerateConfig = new CodeGenerateConfig
+            {
+                CallStyleHashCode = callStyle,
+                CodeLayerHashCode = codeLayer,
+                DaoStyleHashCode = daoStyle,
+                ModelName = modelName
+            };
+
+            IDbObject dbObj = DbSetting.CreateDbObject(dbServer);
+
+            //获取数据库表的详细列信息
+            List<ColumnInfo> lstColumns = dbObj.GetColumnInfoList(dbName, tableName);
+            //获取主键列信息
+            List<ColumnInfo> lstKeys = (from columnInfo in lstColumns
+                                        where columnInfo.IsPK
+                                        select columnInfo).ToList();
+
+            //Service  代码生成
+            IBuilderService serviceBuilder = ServiceBuilder.Create()
+                .SetGenerateConfig(codeGenerateConfig)
+                .SetKeys(lstKeys)
+                .GetServiceBuilder();
+            string serviceCode = serviceBuilder.GetServiceCode();
+
+            //Dao 代码生成
+            IBuilderDao daoBuilder = DaoBuilder.Create()
+                .SetDbObj(dbObj)
+                .SetDbName(dbName)
+                .SetTableName(tableName)
+                .SetColFields(lstColumns)
+                .SetKeys(lstKeys)
+                .SetGenerateConfig(codeGenerateConfig)
+                .GetDaoBuilder();
+            string daoCode = daoBuilder.GetDaoCode();
+
+            //Service DTO 代码生成
+            IBuilderDTO serviceDTOBuilder = new AC.Code.JavaBuilder.BuilderDTO(codeGenerateConfig, lstColumns);
+            string serviceDTOCode = serviceDTOBuilder.GetServiceDTOCode();
+
+            //如果是Service五层架构，则继续生成Domain和ServiceImpl层
+            if (codeGenerateConfig.CodeLayer == CodeLayer.ServiceLayerWithDomain)
+            {
+                //生成Domain层代码
+                IBuilderDomain builderDomain = new BuilderDomain(lstKeys, codeGenerateConfig);
+                string domainCode = builderDomain.GetDomainCode();
+
+                //生成ServiceImpl层代码
+                IBuilderServiceImpl builderServiceImpl = new BuilderServiceImpl(lstKeys, codeGenerateConfig);
+                string serviceImplCode = builderServiceImpl.GetServiceImplCode();
+
+                return Json(new
+                {
+                    IsSuccess = true,
+                    ServiceDTOCode = serviceDTOCode,
+                    ServiceCode = serviceCode,
+                    ServiceImplCode = serviceImplCode,
+                    DomainCode = domainCode,
+                    DaoCode = daoCode
+                });
+            }
+            //如果是Service不带Domain层代码，只需要生成ServiceImpl层代码
+            if (codeGenerateConfig.CodeLayer == CodeLayer.ServiceLayerWithoutDomain)
+            {
+                IBuilderServiceImpl builderServiceImpl = new BuilderServiceImpl(lstKeys, codeGenerateConfig);
+                string serviceImplCode = builderServiceImpl.GetServiceImplCode();
+                return Json(new
+                {
+                    IsSuccess = true,
+                    ServiceDTOCode = serviceDTOCode,
+                    ServiceCode = serviceCode,
+                    ServiceImplCode = serviceImplCode,
+                    DaoCode = daoCode
+                });
+            }
+
+            return Json(new
+            {
+                IsSuccess = true,
+                ServiceDTOCode = serviceDTOCode,
+                ServiceCode = serviceCode,
+                DaoCode = daoCode
+            });
         }
     }
 }

@@ -30,35 +30,18 @@ namespace AC.Code.JavaBuilder
         public string GetServiceDTOCode()
         {
             var strclass = new StringPlus();
-            strclass.AppendLine("using System;");
-            strclass.AppendLine("namespace " + CodeName.ServiceDTONamespace);
-            strclass.AppendLine("{");
-            strclass.AppendSpaceLine(1, "/// <summary>");
-            strclass.AppendSpaceLine(1, "/// 实体类" + CodeName.ServiceDTOName + " 。(属性说明自动提取数据库字段的描述信息)");
-            strclass.AppendSpaceLine(1, "/// Generate By: " + Environment.UserName);
-            strclass.AppendSpaceLine(1, "/// Generate Time: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            strclass.AppendSpaceLine(1, "/// </summary>");
-            //strclass.AppendSpaceLine(1, "[Serializable]");
-            strclass.AppendSpaceLine(1, "public class " + CodeName.ServiceDTOName);
-            strclass.AppendSpaceLine(1, "{");
-            strclass.AppendSpaceLine(2, "public " + CodeName.ServiceDTOName + "() { }");
-            //strclass.AppendSpaceLine(2, "{}");
-            strclass.AppendLine(GeneratePropertiesCode());
-            strclass.AppendSpaceLine(1, "}");
-            if (GenerateConfig.QueryMethodNeeded)
-            {
-                strclass.AppendSpaceLine(1, "/// <summary>");
-                strclass.AppendSpaceLine(1,
-                                         "/// 查询对象类" + CodeName.ServiceQueryDTOName + " 。(属性说明自动提取数据库字段的描述信息)");
-                strclass.AppendSpaceLine(1, "/// Generate By: " + Environment.UserName);
-                strclass.AppendSpaceLine(1, "/// Generate Time: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                strclass.AppendSpaceLine(1, "/// </summary>");
-                strclass.AppendSpaceLine(1, "public class " + CodeName.ServiceQueryDTOName);
-                strclass.AppendSpaceLine(1, "{");
-                strclass.AppendSpaceLine(2, "public " + CodeName.ServiceQueryDTOName + "() { }");
-                strclass.AppendSpaceLine(1, "}");
-            }
+            strclass.AppendLine("package com.renrentui.entity;");
 
+            strclass.AppendLine("import java.util.Date;");
+            strclass.AppendLine("/**");
+            strclass.AppendLine(" * 实体类" + CodeName.ServiceDTOName + ". (属性说明自动提取数据库字段的描述信息)");
+            strclass.AppendLine(" * @author edaisong.system");
+            strclass.AppendLine(" * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            strclass.AppendLine(" *");
+            strclass.AppendLine(" */");
+
+            strclass.AppendLine("public class " + CodeName.ServiceDTOName + " {");
+            strclass.AppendLine(GeneratePropertiesCode());
             strclass.AppendLine("}");
 
             return strclass.ToString();
@@ -72,34 +55,23 @@ namespace AC.Code.JavaBuilder
             {
                 string columnName = field.ColumnName;
                 string columnType = field.TypeName;
-                bool isIdentity = field.IsIdentity;
-                bool ispk = field.IsPK;
-                bool cisnull = field.cisNull;
                 string deText = field.DeText;
                 columnType = CodeCommon.DbTypeToCS(columnType);
-                string isnull = "";
-                if (CodeCommon.IsValueType(columnType))
-                {
-                    if ((!isIdentity) && (!ispk) && (cisnull))
-                    {
-                        isnull = "?"; //代表可空类型
-                    }
-                }
-                //strclass1.AppendSpaceLine(2, "private " + columnType + isnull + " _" + columnName.ToLower() + ";");//私有变量
-                strclass2.AppendSpaceLine(2, "/// <summary>");
-                strclass2.AppendSpaceLine(2, "/// " + deText);
-                strclass2.AppendSpaceLine(2, "/// </summary>");
-                strclass2.AppendSpaceLine(2, "public " + columnType + isnull + " " + columnName + " { get; set; }");
-                //属性
-                //strclass2.AppendSpaceLine(2, "{");
-                //strclass2.AppendSpaceLine(3, "set{" + " _" + columnName.ToLower() + "=value;}");
-                //strclass2.AppendSpaceLine(3, "get{return " + "_" + columnName.ToLower() + ";}");
-                //strclass2.AppendSpaceLine(2, "}");
+                strclass2.AppendSpaceLine(1, "/**");
+                strclass2.AppendSpaceLine(1, " * " + deText);
+                strclass2.AppendSpaceLine(1, " */");
+                strclass2.AppendSpaceLine(1, string.Format("private {0} {1};", columnType, columnName));
+                strclass2.AppendSpaceLine(1, string.Format("public {0} get{1}() {", columnType, columnName));
+                strclass2.AppendSpaceLine(2, string.Format("return {0};", columnName));
+                strclass2.AppendSpaceLine(1, "}");
+                strclass2.AppendLine();
+                strclass2.AppendSpaceLine(1,
+                    string.Format(@"public void set{0}({1} {0}) {", columnName, columnType));
+                strclass2.AppendSpaceLine(2, string.Format("this.{0} = {0}", columnName));
+                strclass2.AppendSpaceLine(1, "}");
             }
-            //strclass.Append(strclass1.Value);
             strclass.Append(strclass2.Value);
-            //strclass.AppendSpaceLine(2, "#endregion Model");
-
+            
             return strclass.ToString();
         }
 

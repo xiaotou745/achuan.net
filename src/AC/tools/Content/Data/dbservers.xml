@@ -1,11 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <dbservers>
-  <dbserver servername="115.28.152.245" 
+  <dbserver servername="127.0.0.1" 
             dbtype="sqlserver"
-            connstring="Data Source=115.28.152.245; Initial Catalog=Sizom; Uid=artsizom;pwd=q1w2e3r$;">
+            connstring="Data Source=127.0.0.1; Initial Catalog=WYC; Uid=sa;pwd=Vancl@123;">
   </dbserver>
-  <dbserver servername="115.28.152.245"
-            dbtype="mysql"
-            connstring="Data Source=115.28.152.245; Initial Catalog=Sizom; Uid=artsizom;pwd=q1w2e3r$;">
-  </dbserver>
+  
 </dbservers>
