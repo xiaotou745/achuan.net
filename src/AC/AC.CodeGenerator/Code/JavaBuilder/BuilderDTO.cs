@@ -69,7 +69,7 @@ namespace AC.Code.JavaBuilder
                 strclass2.AppendSpaceLine(1, "}");
                 strclass2.AppendSpaceLine(1,
                     string.Format(@"public void set{0}({1} {2}) ", columnName, columnType, CodeCommon.SetFirstCharacterLower(columnName)) + "{");
-                strclass2.AppendSpaceLine(2, string.Format("this.{0} = {0}", CodeCommon.SetFirstCharacterLower(columnName)));
+                strclass2.AppendSpaceLine(2, string.Format("this.{0} = {0};", CodeCommon.SetFirstCharacterLower(columnName)));
                 strclass2.AppendSpaceLine(1, "}");
                 strclass2.AppendLine();
             }

@@ -78,4 +78,39 @@ namespace AC.Code.Config
         [Description("Service标准五层结构去掉Domain层接口 Service ServiceImpl Dao DTO")]
         ServiceLayerWithoutDomain=4,
     }
+
+    /// <summary>
+    /// 命名类型
+    /// </summary>
+    public enum NameStyle
+    {
+        [Description("UpperCamelCase")]
+        UpperCamelCase = 1,
+        [Description("lowerCamelCase")]
+        lowerCamelCase = 2,
+        [Description("ALL_UPPER")]
+        ALL_UPPER = 3,
+        [Description("all_lower")]
+        all_lower = 4,
+        [Description("First_upper")]
+        First_upper = 5,
+    }
+
+    public enum CodeLanguage
+    {
+        [Description("C#")]
+        CSharp = 1,
+        [Description("Java")]
+        Java = 2,
+    }
+
+    public enum EntityKind
+    {
+        [Description("类型及命名空间")]
+        TypesAndNamespace = 1,
+        [Description("接口")]
+        Interface = 2,
+        [Description("枚举成员")]
+        EnumMembers=3,
+    }
 }
