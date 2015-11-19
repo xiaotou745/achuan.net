@@ -35,20 +35,22 @@
                 var dbname = $(this).text();
                 $("#txtDbName").val(dbname);
                 $("#dbSelector").submit();
-            })
+                return false;
+            });
 
-            $(document).delegate("td.J_tableName a", "click", function () {
+            $(document).delegate("td.J_tableName a", "click", function() {
                 var tableName = $(this).text();
                 $("#txtTableName").val(tableName);
                 tableNameKeydown();
-            })
+                return false;
+            });
 
-            $("#returnTableList").bind("click", function () {
+            $("#returnTableList").bind("click", function() {
                 $("#txtTableName").val("");
                 $("#dbSelector").submit();
-            })
+            });
 
-            $(document).delegate("td.J_editTableDesc a", "click", function () {
+            $(document).delegate("td.J_editTableDesc a", "click", function() {
                 var tableName = $(this).parent().siblings("[name='tableName']").text();
                 var desc = $(this).parent().prev().text();
 
@@ -62,9 +64,9 @@
                     keyboard: true,
                     show: true
                 });
-            })
+            });
 
-            $(document).delegate("td.J_editColumnDesc a", "click", function () {
+            $(document).delegate("td.J_editColumnDesc a", "click", function() {
                 var tableName = $("#txtTableName").val();
                 var columnName = $(this).parent().siblings(":eq(1)").text();
                 var desc = $(this).parent().prev().text();
@@ -79,9 +81,9 @@
                     keyboard: true,
                     show: true
                 });
-            })
+            });
 
-            $("#btnSaveDesc").bind("click", function () {
+            $("#btnSaveDesc").bind("click", function() {
                 var dbServer = $("#dbServer").val();
                 var dbName = $("#txtDbName").val()
                 var tableName = $("#lblTableName").val();
@@ -90,22 +92,22 @@
 
                 $.blockUI();
                 $.post(
-                "/TableView/UpdateDesc",
-                { dbServer: dbServer, dbName: dbName, dbTable: tableName, columnName: columnName, desc: desc },
-                function (data) {
-                    if (data) {
-                        var descType = $("#hidDescType").val();
-                        if (descType == 0) {
-                            $("#dbSelector").submit();
-                        } else {
-                            tableNameKeydown();
+                    "/TableView/UpdateDesc",
+                    { dbServer: dbServer, dbName: dbName, dbTable: tableName, columnName: columnName, desc: desc },
+                    function(data) {
+                        if (data) {
+                            var descType = $("#hidDescType").val();
+                            if (descType == 0) {
+                                $("#dbSelector").submit();
+                            } else {
+                                tableNameKeydown();
+                            }
                         }
+                        $("#modalDescEdit").modal("hide");
+                        $.unblockUI();
                     }
-                    $("#modalDescEdit").modal("hide");
-                    $.unblockUI();
-                }
-            );
-            })
+                );
+            });
         });
         //弹出生成代码配置对话框
         function showDescEditDialog() {
