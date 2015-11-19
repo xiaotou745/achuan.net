@@ -7,6 +7,71 @@ using AC.Code.IBuilder;
 
 namespace AC.Code.Builder
 {
+    public class DomainBuilder
+    {
+        private CodeGenerateConfig generateConfig;
+        private List<ColumnInfo> keys;
+
+        #region Create
+
+        private DomainBuilder()
+        {
+        }
+
+        public static DomainBuilder Create()
+        {
+            var serviceBuilder = new DomainBuilder();
+            return serviceBuilder;
+        }
+
+        public static DomainBuilder Create(CodeGenerateConfig codeGenerateConfig, List<ColumnInfo> colKeys)
+        {
+            var serviceBuilder = new DomainBuilder();
+            serviceBuilder.generateConfig = codeGenerateConfig;
+            serviceBuilder.keys = colKeys;
+            return serviceBuilder;
+        }
+
+        #endregion
+
+        #region Set
+
+        public DomainBuilder SetGenerateConfig(CodeGenerateConfig codeGenerateConfig)
+        {
+            generateConfig = codeGenerateConfig;
+            return this;
+        }
+
+        public DomainBuilder SetKeys(List<ColumnInfo> colKeys)
+        {
+            keys = colKeys;
+            return this;
+        }
+
+        #endregion
+
+        #region Get
+
+        public IBuilderDomain GetDomain()
+        {
+            if (generateConfig == null)
+            {
+                return null;
+            }
+            if (generateConfig.Language == CodeLanguage.CSharp)
+            {
+                return new BuilderDomain(keys, generateConfig);
+            }
+            else if (generateConfig.Language == CodeLanguage.Java)
+            {
+                return new JavaBuilder.BuilderDomain(keys, generateConfig);
+            }
+            return null;
+        }
+
+        #endregion
+    }
+
     public class BuilderDomain : IBuilderDomain
     {
         #region  ¹¹Ôìº¯Êý

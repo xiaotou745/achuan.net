@@ -50,18 +50,7 @@ namespace AC.Code.JavaBuilder
         public string GetDomainCode()
         {
             var strclass = new StringPlus();
-            strclass.AppendLine("using System.Collections.Generic;");
-            strclass.AppendLine("using " + CodeName.ServiceDTONamespace + ";");
-
-            strclass.AppendLine("namespace " + CodeName.DomainNamespace);
-            strclass.AppendLine("{");
-            strclass.AppendSpaceLine(1, "/// <summary>");
-            strclass.AppendSpaceLine(1, "/// 业务领域对象类" + CodeName.DomainName + " 的摘要说明。");
-            strclass.AppendSpaceLine(1, "/// Generate By: " + Environment.UserName);
-            strclass.AppendSpaceLine(1, "/// Generate Time: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            strclass.AppendSpaceLine(1, "/// </summary>");
-            strclass.AppendSpaceLine(1, "public interface " + CodeName.DomainName);
-            strclass.AppendSpaceLine(1, "{");
+            strclass.Append(GenerateDomainHead());
 
             #region  方法代码
 
@@ -88,28 +77,52 @@ namespace AC.Code.JavaBuilder
 
             #endregion
 
-            strclass.AppendSpaceLine(1, "}");
             strclass.AppendLine("}");
-            strclass.AppendLine(string.Empty);
 
             return strclass.ToString();
         }
+        private string GenerateDomainHead()
+        {
+            var strclass = new StringPlus();
+            strclass.AppendLine("package " + CodeName.DomainNamespace + ";");
+            strclass.AppendLine();
 
+            strclass.AppendLine("import java.util.List;");
+            strclass.AppendLine(string.Format("import {0};", CodeName.ServiceDTOFullName));
+            strclass.AppendLine();
+
+            strclass.AppendLine("/**");
+            strclass.AppendLine(" * 领域对象接口 " + CodeName.DomainName + "");
+            strclass.AppendLine(" * @author " + GenerateConfig.Author);
+            strclass.AppendLine(" * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            strclass.AppendLine(" *");
+            strclass.AppendLine(" */");
+
+            strclass.AppendLine("public interface " + CodeName.DomainName + " {");
+
+            return strclass.ToString();
+        }
         public string GenerateInsertCode()
         {
             var strclass = new StringPlus();
 
-            strclass.AppendSpaceLine(2, "/// <summary>");
-            strclass.AppendSpaceLine(2, "/// 新增一条记录");
-            //strclass.AppendSpaceLine(2, @"///<param name="{0}"></param>");}
-            strclass.AppendSpaceLine(2, "/// </summary>");
+            strclass.AppendSpaceLine(1, "/**");
+            strclass.AppendSpaceLine(1, " * 新增一条记录");
+            strclass.AppendSpaceLine(1, " * @author " + GenerateConfig.Author);
+            strclass.AppendSpaceLine(1, " * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            strclass.AppendSpaceLine(1, " * @param " + CodeName.CodeOfDTOParam + " 要新增的对象");
+            if (IsHasIdentity)
+            {
+                strclass.AppendSpaceLine(1, " * @return  返回新增对象的自增Id");
+            }
+            strclass.AppendSpaceLine(1, " */");
 
             string returnType = "void";
             if (IsHasIdentity)
             {
                 returnType = IdentityType;
             }
-            strclass.AppendSpaceLine(2, returnType + " Insert(" + CodeName.CodeOfMethodDTOParam + ");");
+            strclass.AppendSpaceLine(1, returnType + " insert(" + CodeName.CodeOfMethodDTOParam + ");");
 
             return strclass.ToString();
         }
@@ -118,11 +131,14 @@ namespace AC.Code.JavaBuilder
         {
             var strclass = new StringPlus();
 
-            strclass.AppendSpaceLine(2, "/// <summary>");
-            strclass.AppendSpaceLine(2, "/// 修改一条记录");
-            strclass.AppendSpaceLine(2, "/// </summary>");
+            strclass.AppendSpaceLine(1, "/**");
+            strclass.AppendSpaceLine(1, " * 更新一条记录");
+            strclass.AppendSpaceLine(1, " * @author " + GenerateConfig.Author);
+            strclass.AppendSpaceLine(1, " * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            strclass.AppendSpaceLine(1, " * @param " + CodeName.CodeOfDTOParam + " 要更改的对象");
+            strclass.AppendSpaceLine(1, " */");
 
-            strclass.AppendSpaceLine(2, "void Update(" + CodeName.CodeOfMethodDTOParam + ");");
+            strclass.AppendSpaceLine(1, "void update(" + CodeName.CodeOfMethodDTOParam + ");");
 
             return strclass.ToString();
         }
@@ -130,34 +146,55 @@ namespace AC.Code.JavaBuilder
         public string GenerateDeleteCode()
         {
             var strclass = new StringPlus();
-            strclass.AppendSpaceLine(2, "/// <summary>");
-            strclass.AppendSpaceLine(2, "/// 删除一条记录");
-            strclass.AppendSpaceLine(2, "/// </summary>");
-            strclass.AppendSpaceLine(2, "void Delete(" + CodeCommon.GetInParameter(Keys) + ");");
+
+            strclass.AppendSpaceLine(1, "/**");
+            strclass.AppendSpaceLine(1, " * 删除一条记录");
+            strclass.AppendSpaceLine(1, " * @author " + GenerateConfig.Author);
+            strclass.AppendSpaceLine(1, " * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            foreach (var key in Keys)
+            {
+                strclass.AppendSpaceLine(1,
+                    " * @param " + CodeCommon.SetFirstCharacterLower(key.ColumnName) + " " + key.DeText);
+            }
+            strclass.AppendSpaceLine(1, " */");
+
+            strclass.AppendSpaceLine(1, "void delete(" + CodeCommon.GetInParameterOfJava(Keys) + ");");
+
             return strclass.ToString();
         }
 
         public string GenerateQueryCode()
         {
             var strclass = new StringPlus();
-            strclass.AppendSpaceLine(2, "/// <summary>");
-            strclass.AppendSpaceLine(2, "/// 查询方法");
-            strclass.AppendSpaceLine(2, "/// </summary>");
-            strclass.AppendSpaceLine(2,
-                                     "IList<" + CodeName.ServiceDTOName + "> Query(" +
-                                     CodeName.CodeOfQueryMethodDTOParam + ");");
+
+            strclass.AppendSpaceLine(1, "/**");
+            strclass.AppendSpaceLine(1, " * 查询方法");
+            strclass.AppendSpaceLine(1, " * @author " + GenerateConfig.Author);
+            strclass.AppendSpaceLine(1, " * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            strclass.AppendSpaceLine(1, " * @param " + CodeName.CodeOfQueryDTOParam + " 查询条件");
+            strclass.AppendSpaceLine(1, " */");
+            strclass.AppendSpaceLine(1, "List<" + CodeName.ServiceDTOName + "> select(" + CodeName.CodeOfQueryMethodDTOParam + ");");
+
             return strclass.ToString();
         }
 
         public string GenerateGetByIdCode()
         {
             var strclass = new StringPlus();
-            strclass.AppendSpaceLine(2, "/// <summary>");
-            strclass.AppendSpaceLine(2, "/// 得到一个对象实体");
-            strclass.AppendSpaceLine(2, "/// </summary>");
-            strclass.AppendSpaceLine(2,
-                                     CodeName.ServiceDTOName + " GetById(" +
-                                     CodeCommon.GetInParameter(Keys) + ");");
+
+            strclass.AppendSpaceLine(1, "/**");
+            strclass.AppendSpaceLine(1, " * 根据Id得到一个对象实体");
+            strclass.AppendSpaceLine(1, " * @author " + GenerateConfig.Author);
+            strclass.AppendSpaceLine(1, " * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            foreach (var key in Keys)
+            {
+                strclass.AppendSpaceLine(1,
+                    " * @param " + CodeCommon.SetFirstCharacterLower(key.ColumnName) + " " + key.DeText);
+            }
+            strclass.AppendSpaceLine(1, " */");
+
+            strclass.AppendSpaceLine(1, CodeName.ServiceDTOName + " getById(" + CodeCommon.GetInParameterOfJava(Keys) + ");");
+
             return strclass.ToString();
         }
 

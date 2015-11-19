@@ -7,6 +7,14 @@ namespace AC.Code.Config
         CSharp=1,
         Java=2,
     }
+    public enum CodeLanguage
+    {
+        [Description("C#")]
+        CSharp = 1,
+        [Description("Java")]
+        Java = 2,
+    }
+
     /// <summary>
     /// Dao实现方式
     /// DbHelper:使用自我封装的DbHelper形式
@@ -96,13 +104,7 @@ namespace AC.Code.Config
         First_upper = 5,
     }
 
-    public enum CodeLanguage
-    {
-        [Description("C#")]
-        CSharp = 1,
-        [Description("Java")]
-        Java = 2,
-    }
+    
 
     public enum EntityKind
     {

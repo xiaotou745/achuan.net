@@ -7,6 +7,71 @@ using AC.Code.IBuilder;
 
 namespace AC.Code.Builder
 {
+    public class ServiceImplBuilder
+    {
+        private CodeGenerateConfig generateConfig;
+        private List<ColumnInfo> keys;
+
+        #region Create
+
+        private ServiceImplBuilder()
+        {
+        }
+
+        public static ServiceImplBuilder Create()
+        {
+            var serviceBuilder = new ServiceImplBuilder();
+            return serviceBuilder;
+        }
+
+        public static ServiceImplBuilder Create(CodeGenerateConfig codeGenerateConfig, List<ColumnInfo> colKeys)
+        {
+            var serviceBuilder = new ServiceImplBuilder();
+            serviceBuilder.generateConfig = codeGenerateConfig;
+            serviceBuilder.keys = colKeys;
+            return serviceBuilder;
+        }
+
+        #endregion
+
+        #region Set
+
+        public ServiceImplBuilder SetGenerateConfig(CodeGenerateConfig codeGenerateConfig)
+        {
+            generateConfig = codeGenerateConfig;
+            return this;
+        }
+
+        public ServiceImplBuilder SetKeys(List<ColumnInfo> colKeys)
+        {
+            keys = colKeys;
+            return this;
+        }
+
+        #endregion
+
+        #region Get
+
+        public IBuilderServiceImpl GetServiceImpl()
+        {
+            if (generateConfig == null)
+            {
+                return null;
+            }
+            if (generateConfig.Language == CodeLanguage.CSharp)
+            {
+                return new BuilderServiceImpl(keys, generateConfig);
+            }
+            else if (generateConfig.Language == CodeLanguage.Java)
+            {
+                return new JavaBuilder.BuilderServiceImpl(keys, generateConfig);
+            }
+            return null;
+        }
+
+        #endregion
+    }
+
     public class BuilderServiceImpl : IBuilderServiceImpl
     {
         protected bool IsHasIdentity { get; private set; }

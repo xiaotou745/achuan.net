@@ -58,17 +58,25 @@ namespace AC.Code.Builder
             {
                 return null;
             }
-            switch (generateConfig.CodeLayer)
+            if (generateConfig.Language == CodeLanguage.CSharp)
             {
-                case CodeLayer.ThreeLayer:
-                case CodeLayer.ServiceThreeLayer:
-                    return new BuilderServiceOfThreeLayer(keys, generateConfig);
-                case CodeLayer.ServiceLayerWithDomain:
-                case CodeLayer.ServiceLayerWithoutDomain:
-                    return new BuilderServiceOfSerivceLayer(keys, generateConfig);
-                default:
-                    return new BuilderServiceOfThreeLayer(keys, generateConfig);
+                switch (generateConfig.CodeLayer)
+                {
+                    case CodeLayer.ThreeLayer:
+                    case CodeLayer.ServiceThreeLayer:
+                        return new BuilderServiceOfThreeLayer(keys, generateConfig);
+                    case CodeLayer.ServiceLayerWithDomain:
+                    case CodeLayer.ServiceLayerWithoutDomain:
+                        return new BuilderServiceOfSerivceLayer(keys, generateConfig);
+                    default:
+                        return new BuilderServiceOfThreeLayer(keys, generateConfig);
+                }
             }
+            else if (generateConfig.Language == CodeLanguage.Java)
+            {
+                return new JavaBuilder.BuilderService(keys, generateConfig);
+            }
+            return null;
         }
 
         #endregion

@@ -21,8 +21,7 @@ namespace AC.Code.JavaBuilder
         {
             GenerateConfig = generateConfig;
             Fieldlist = fields;
-            CodeName = CodeNameFactory.Create(generateConfig.CodeLayer, CodeType.Java)
-                .GetCodeName(generateConfig.SubNamespace, generateConfig.ModelName);
+            CodeName = generateConfig.CodeName;
         }
 
         #region IBuilderDTO Members
@@ -30,7 +29,7 @@ namespace AC.Code.JavaBuilder
         public string GetServiceDTOCode()
         {
             var strclass = new StringPlus();
-            strclass.AppendLine("package com.renrentui.entity;");
+            strclass.AppendLine("package " + CodeName.ServiceDTONamespace + ";");
             strclass.AppendLine();
 
             strclass.AppendLine("import java.util.Date;");
@@ -38,7 +37,7 @@ namespace AC.Code.JavaBuilder
 
             strclass.AppendLine("/**");
             strclass.AppendLine(" * 实体类" + CodeName.ServiceDTOName + ". (属性说明自动提取数据库字段的描述信息)");
-            strclass.AppendLine(" * @author edaisong.tools");
+            strclass.AppendLine(" * @author " + GenerateConfig.Author);
             strclass.AppendLine(" * @date " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             strclass.AppendLine(" *");
             strclass.AppendLine(" */");

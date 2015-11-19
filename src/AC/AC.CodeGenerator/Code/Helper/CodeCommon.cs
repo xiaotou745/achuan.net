@@ -611,6 +611,16 @@ namespace AC.Code.Helper
 			strclass.DelLastComma();
 			return strclass.Value;
 		}
+        public static string GetInParameterOfJava(List<ColumnInfo> keys)
+        {
+            var strclass = new StringPlus();
+            foreach (ColumnInfo key in keys)
+            {
+                strclass.Append(DbTypeToJava(key.TypeName) + " " + SetFirstCharacterLower(key.ColumnName) + ",");
+            }
+            strclass.DelLastComma();
+            return strclass.Value;
+        }
 
 		public static string SetFirstCharacterLower(string str)
 		{
