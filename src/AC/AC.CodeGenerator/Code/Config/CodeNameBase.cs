@@ -173,6 +173,17 @@ namespace AC.Code.Config
             }
             return sb.ToString();
         }
+
+        public string getRequestBaseOfJava()
+        {
+            string requestBase = string.Empty;
+            int lastIndexOf = ServiceDTONamespace.LastIndexOf(".", System.StringComparison.Ordinal);
+            if (lastIndexOf >= 0)
+            {
+                requestBase = ServiceDTONamespace.Substring(0, lastIndexOf) + ".common.RequestBase;";
+            }
+            return requestBase;
+        }
     }
 
     public class CustomCodeName
@@ -250,7 +261,7 @@ namespace AC.Code.Config
 
         public override string ServiceQueryDTOName
         {
-            get { return ModelName + "QueryInfo"; }
+            get { return "RequestBase"; }
         }
 
         #endregion

@@ -37,7 +37,7 @@ namespace AC.Code.JavaBuilder
                     if (key.IsIdentity)
                     {
                         IsHasIdentity = true;
-                        IdentityType = CodeCommon.DbTypeToCS(key.TypeName);
+                        IdentityType = CodeCommon.DbTypeToJava(key.TypeName);
                     }
                 }
             }
@@ -91,6 +91,11 @@ namespace AC.Code.JavaBuilder
             }
             var namespaces = sss.ToString().Substring(0, sss.Length - 1);
             strclass.AppendLine("import " + namespaces + ".common.DaoBase;");
+            string requestBase = CodeName.getRequestBaseOfJava();
+            if (!string.IsNullOrEmpty(requestBase))
+            {
+                strclass.AppendLine(string.Format("import {0}", requestBase));
+            }
             strclass.AppendLine(string.Format("import {0};", CodeName.ServiceDTOFullName));
             strclass.AppendLine(string.Format("import {0};", CodeName.DomainFullName));
             strclass.AppendLine();

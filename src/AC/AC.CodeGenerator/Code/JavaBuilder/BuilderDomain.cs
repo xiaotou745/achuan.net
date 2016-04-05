@@ -28,7 +28,7 @@ namespace AC.Code.JavaBuilder
                     if (key.IsIdentity)
                     {
                         IsHasIdentity = true;
-                        IdentityType = CodeCommon.DbTypeToCS(key.TypeName);
+                        IdentityType = CodeCommon.DbTypeToJava(key.TypeName);
                     }
                 }
             }
@@ -89,6 +89,11 @@ namespace AC.Code.JavaBuilder
 
             strclass.AppendLine("import java.util.List;");
             strclass.AppendLine(string.Format("import {0};", CodeName.ServiceDTOFullName));
+            string requestBase = CodeName.getRequestBaseOfJava();
+            if (!string.IsNullOrEmpty(requestBase))
+            {
+                strclass.AppendLine(string.Format("import {0}", requestBase));
+            }
             strclass.AppendLine();
 
             strclass.AppendLine("/**");

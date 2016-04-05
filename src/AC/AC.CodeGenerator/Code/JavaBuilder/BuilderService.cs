@@ -181,6 +181,8 @@ namespace AC.Code.JavaBuilder
             return strclass.ToString();
         }
 
+        
+
         private string GenerateServiceHead()
         {
             var strclass = new StringPlus();
@@ -189,6 +191,11 @@ namespace AC.Code.JavaBuilder
 
             strclass.AppendLine("import java.util.List;");
             strclass.AppendLine(string.Format("import {0};", CodeName.ServiceDTOFullName));
+            string requestBase = CodeName.getRequestBaseOfJava();
+            if (!string.IsNullOrEmpty(requestBase))
+            {
+                strclass.AppendLine(string.Format("import {0}", requestBase));
+            }
             strclass.AppendLine();
 
             strclass.AppendLine("/**");
