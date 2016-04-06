@@ -174,6 +174,13 @@ function generateCode() {
                     $("#tabCodes a[href=#tabDomain]").hide();
                     $("#codeOfDomain").text("");
                 }
+                if (data.MyBatis) {
+                    $("#tabCodes a[href=#tabMyBatis]").show();
+                    $("#codeOfBatis").text(data.MyBatis);
+                } else {
+                    $("#tabCodes a[href=#tabMyBatis]").hide();
+                    $("#codeOfBatis").text("");
+                }
                 $("#generateCodeSettings").modal("hide");
                 $("#tdTableInfo").show();
                 $("#tabResult > ul li").removeClass("active");

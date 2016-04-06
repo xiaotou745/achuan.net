@@ -191,6 +191,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DbSettingModel.cs" />
+    <Compile Include="Models\LanguageTemplate.cs" />
     <Compile Include="Models\TableViewModel.cs" />
     <Compile Include="Models\CodeGenerateParams.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -27,6 +27,10 @@ namespace AC.Code.Builder
             {
                 return null;
             }
+            if (generateConfig.Language == CodeLanguage.Java)
+            {
+                return new JavaBuilder.BuilderDao(dbObject, dbName, tableName, colFields, keys, generateConfig);
+            }
             switch (generateConfig.DaoStyle)
             {
                 case DaoStyle.DbHelper:

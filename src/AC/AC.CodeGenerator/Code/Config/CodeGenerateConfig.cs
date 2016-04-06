@@ -11,6 +11,8 @@ namespace AC.Code.Config
     {
         private DbType dbType = DbType.SQL2005;
 
+        
+
         #region 方法选择
 
         private bool createMethodNeeded = true;
@@ -75,9 +77,19 @@ namespace AC.Code.Config
             get { return codeType; }
             set { codeType = value; }
         }
+
+        private CodeLanguage codeLanguage = CodeLanguage.CSharp;
+        /// <summary>
+        /// 代码生成语言
+        /// </summary>
+        public CodeLanguage Language
+        {
+            get { return codeLanguage; }
+            set { codeLanguage = value; }
+        }
         #endregion
 
-        #region CallStyle
+        #region CallStyle 方法调用方式，是使用new还是使用ioc注入
 
         private string callStyleHashCode;
 
@@ -102,7 +114,7 @@ namespace AC.Code.Config
 
         #endregion
 
-        #region CodeLayer
+        #region CodeLayer 代码架构，使用几层代码架构；
 
         private string codeLayerHashCode;
 
@@ -161,10 +173,29 @@ namespace AC.Code.Config
             set { dbType = value; }
         }
 
+        #region 命名规范
+        /// <summary>
+        /// 如果不为null,则使用自定义命名
+        /// </summary>
+        public CustomCodeName CustomCodeName { get; set; }
+
         public CodeNameBase CodeName
         {
-            get { return CodeNameFactory.Create(CodeLayer).GetCodeName(SubNamespace, ModelName); }
+            get { return CodeNameFactory.Create(CodeLayer, CustomCodeName).GetCodeName(SubNamespace, ModelName); }
         }
+
+        public string Author
+        {
+            get
+            {
+                if (CustomCodeName == null || string.IsNullOrEmpty(CustomCodeName.Author))
+                {
+                    return Environment.UserName;
+                }
+                return CustomCodeName.Author;
+            }
+        }
+        #endregion
 
         #region 类名 命名空间名
 

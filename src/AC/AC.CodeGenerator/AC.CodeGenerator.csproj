@@ -52,6 +52,7 @@
     <Compile Include="Code\Builder\BuilderDTO.cs" />
     <Compile Include="Code\Builder\BuilderService.cs" />
     <Compile Include="Code\Builder\BuilderServiceImpl.cs" />
+    <Compile Include="Code\Builder\BuilderMyBatisMapper.cs" />
     <Compile Include="Code\Builder\BuilderSQL.cs" />
     <Compile Include="Code\Config\CodeGenerateConfig.cs" />
     <Compile Include="Code\Config\CodeNameBase.cs" />
@@ -72,12 +73,14 @@
     <Compile Include="Code\IBuilder\IBuilderDao.cs" />
     <Compile Include="Code\IBuilder\IBuilderDomain.cs" />
     <Compile Include="Code\IBuilder\IBuilderDTO.cs" />
+    <Compile Include="Code\IBuilder\IBuilderMyBatisMapper.cs" />
     <Compile Include="Code\IBuilder\IBuilderService.cs" />
     <Compile Include="Code\IBuilder\IBuilderServiceImpl.cs" />
     <Compile Include="Code\IBuilder\IBuilderSQL.cs" />
     <Compile Include="Code\JavaBuilder\BuilderDao.cs" />
     <Compile Include="Code\JavaBuilder\BuilderDomain.cs" />
     <Compile Include="Code\JavaBuilder\BuilderDTO.cs" />
+    <Compile Include="Code\JavaBuilder\BuilderMyBatisMapper.cs" />
     <Compile Include="Code\JavaBuilder\BuilderService.cs" />
     <Compile Include="Code\JavaBuilder\BuilderServiceImpl.cs" />
     <Compile Include="Code\JavaBuilder\BuilderSQL.cs" />

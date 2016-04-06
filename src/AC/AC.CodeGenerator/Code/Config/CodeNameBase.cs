@@ -8,6 +8,7 @@ namespace AC.Code.Config
     {
         private CodeLayer codeLayer;
         private CodeType codeType;
+        private CustomCodeName customCodeName;
 
         private CodeNameFactory()
         {
@@ -18,6 +19,11 @@ namespace AC.Code.Config
             return new CodeNameFactory {codeLayer = codeLayer, codeType = CodeType.CSharp};
         }
 
+        public static CodeNameFactory Create(CodeLayer codeLayer, CustomCodeName customCodeName)
+        {
+            return new CodeNameFactory {codeLayer = codeLayer, customCodeName = customCodeName};
+        }
+
         public static CodeNameFactory Create(CodeLayer codeLayer, CodeType codeType)
         {
             return new CodeNameFactory {codeLayer = codeLayer, codeType = codeType};
@@ -25,6 +31,11 @@ namespace AC.Code.Config
 
         public CodeNameBase GetCodeName(string subNamespace, string modelName)
         {
+            //如果使用自定义命名规则，则全部使用自定义的吧
+            if (customCodeName != null)
+            {
+                return new CodeNameOfCustom(subNamespace, modelName, customCodeName);
+            }
             if (codeType == CodeType.Java)
             {
                 return new CodeNameOfJava(subNamespace, modelName);
@@ -162,8 +173,159 @@ namespace AC.Code.Config
             }
             return sb.ToString();
         }
+
+        public string getRequestBaseOfJava()
+        {
+            string requestBase = string.Empty;
+            int lastIndexOf = ServiceDTONamespace.LastIndexOf(".", System.StringComparison.Ordinal);
+            if (lastIndexOf >= 0)
+            {
+                requestBase = ServiceDTONamespace.Substring(0, lastIndexOf) + ".common.RequestBase;";
+            }
+            return requestBase;
+        }
     }
 
+    public class CustomCodeName
+    {
+        public string Author { get; set; }
+
+        public string CommonNamespace { get; set; }
+
+        public string DtoOrDomainNamespace { get; set; }
+
+        public string DaoInterNamespace { get; set; }
+
+        public string DaoNamespace { get; set; }
+
+        public string ServiceInterNamespace { get; set; }
+
+        public string ServiceNamespace { get; set; }
+    }
+
+    public class CodeNameOfCustom : CodeNameBase
+    {
+        protected string ModelName;
+        protected string SubNamespace;
+        protected CustomCodeName CustomCodeName;
+
+        public CodeNameOfCustom(string subNamespace, string modelName, CustomCodeName customCodeName)
+        {
+            SubNamespace = subNamespace;
+            CustomCodeName = customCodeName;
+            var sb = GetModelName(modelName);
+            ModelName = sb;
+        }
+
+        #region Service Name
+
+        /// <summary>
+        /// Service命名空间
+        /// </summary>
+        public override string ServiceNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                    ? CustomCodeName.ServiceInterNamespace
+                    : string.Format("{0}.{1}", CustomCodeName.ServiceInterNamespace, SubNamespace);
+            }
+        }
+
+        public override string ServiceName
+        {
+            get { return "I" + ModelName + "Service"; }
+        }
+
+        #endregion
+
+        #region DTO Name
+
+        /// <summary>
+        /// Service命名空间
+        /// </summary>
+        public override string ServiceDTONamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                    ? CustomCodeName.DtoOrDomainNamespace
+                    : CustomCodeName.DtoOrDomainNamespace + "." + SubNamespace;
+            }
+        }
+
+        public override string ServiceDTOName
+        {
+            get { return ModelName; }
+        }
+
+        public override string ServiceQueryDTOName
+        {
+            get { return "RequestBase"; }
+        }
+
+        #endregion
+
+        #region Dao Name
+
+        /// <summary>
+        /// Service命名空间
+        /// </summary>
+        public override string DaoNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                    ? CustomCodeName.DaoNamespace
+                    : CustomCodeName.DaoNamespace + "." + SubNamespace;
+            }
+        }
+
+        public override string DaoName
+        {
+            get { return ModelName + "Dao"; }
+        }
+
+        #endregion
+
+        #region ServiceImpl
+
+        public override string ServiceImplNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                    ? CustomCodeName.ServiceNamespace
+                    : CustomCodeName.ServiceNamespace + "." + SubNamespace;
+            }
+        }
+
+        public override string ServiceImplName
+        {
+            get { return ModelName + "Service"; }
+        }
+
+        #endregion
+
+        #region Domain
+
+        public override string DomainNamespace
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SubNamespace)
+                    ? CustomCodeName.DaoInterNamespace
+                    : CustomCodeName.DaoInterNamespace + "." + SubNamespace;
+            }
+        }
+
+        public override string DomainName
+        {
+            get { return "I" + ModelName + "Dao"; }
+        }
+
+        #endregion
+    }
     public class CodeNameOfJava : CodeNameBase
     {
         protected string ModelName;

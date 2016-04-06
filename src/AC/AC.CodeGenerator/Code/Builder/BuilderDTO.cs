@@ -57,14 +57,22 @@ namespace AC.Code.Builder
             {
                 return null;
             }
-            if (generateConfig.CodeType == CodeType.CSharp)
+            if (generateConfig.Language == CodeLanguage.CSharp)
             {
                 return new BuilderDTO(generateConfig, fieldList);
             }
-            else if (generateConfig.CodeType == CodeType.Java)
+            else if (generateConfig.Language == CodeLanguage.Java)
             {
                 return new JavaBuilder.BuilderDTO(generateConfig, fieldList);
             }
+            //if (generateConfig.CodeType == CodeType.CSharp)
+            //{
+            //    return new BuilderDTO(generateConfig, fieldList);
+            //}
+            //else if (generateConfig.CodeType == CodeType.Java)
+            //{
+            //    return new JavaBuilder.BuilderDTO(generateConfig, fieldList);
+            //}
             return null;
         }
 
@@ -85,8 +93,7 @@ namespace AC.Code.Builder
         {
             GenerateConfig = generateConfig;
             Fieldlist = fields;
-            CodeName = CodeNameFactory.Create(generateConfig.CodeLayer).GetCodeName(generateConfig.SubNamespace,
-                                                                                    generateConfig.ModelName);
+            CodeName = generateConfig.CodeName;
         }
 
         #region IBuilderDTO Members
@@ -99,7 +106,7 @@ namespace AC.Code.Builder
             strclass.AppendLine("{");
             strclass.AppendSpaceLine(1, "/// <summary>");
             strclass.AppendSpaceLine(1, "/// 实体类" + CodeName.ServiceDTOName + " 。(属性说明自动提取数据库字段的描述信息)");
-            strclass.AppendSpaceLine(1, "/// Generate By: " + Environment.UserName);
+            strclass.AppendSpaceLine(1, "/// Generate By: " + GenerateConfig.Author);
             strclass.AppendSpaceLine(1, "/// Generate Time: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             strclass.AppendSpaceLine(1, "/// </summary>");
             //strclass.AppendSpaceLine(1, "[Serializable]");
@@ -114,7 +121,7 @@ namespace AC.Code.Builder
                 strclass.AppendSpaceLine(1, "/// <summary>");
                 strclass.AppendSpaceLine(1,
                                          "/// 查询对象类" + CodeName.ServiceQueryDTOName + " 。(属性说明自动提取数据库字段的描述信息)");
-                strclass.AppendSpaceLine(1, "/// Generate By: " + Environment.UserName);
+                strclass.AppendSpaceLine(1, "/// Generate By: " + GenerateConfig.Author);
                 strclass.AppendSpaceLine(1, "/// Generate Time: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 strclass.AppendSpaceLine(1, "/// </summary>");
                 strclass.AppendSpaceLine(1, "public class " + CodeName.ServiceQueryDTOName);

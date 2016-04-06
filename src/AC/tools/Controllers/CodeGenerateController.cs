@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using AC.Tools.Models;
 using ICSharpCode.SharpZipLib.Zip;
 using AC.IO;
 using Newtonsoft.Json;
@@ -74,6 +75,10 @@ namespace AC.Tools.Controllers
 
             return View();
         }
+
+        #endregion
+
+        #region NewCodeGenerate
 
         #endregion
 
@@ -256,15 +261,21 @@ namespace AC.Tools.Controllers
         public ActionResult GenerateCode(string dbServer, string dbName, string tableName, string modelName,
                                          string callStyle, string daoStyle, string codeLayer,int codeType)
         {
+            DbSettingModel dbSettingModel = DbSettingModel.Instance;
 
+            var language = (CodeLanguage)Enum.Parse(typeof(CodeLanguage), codeType.ToString());
             var codeGenerateConfig = new CodeGenerateConfig
                                          {
                                              CallStyleHashCode = callStyle,
                                              CodeLayerHashCode = codeLayer,
                                              DaoStyleHashCode = daoStyle,
                                              ModelName = modelName,
-                                             CodeType = (CodeType)Enum.Parse(typeof(CodeType),codeType.ToString())
+                                             CodeType = (CodeType)Enum.Parse(typeof(CodeType),codeType.ToString()),
+                                             Language = language
                                          };
+            codeGenerateConfig.CustomCodeName = language == CodeLanguage.CSharp
+                ? dbSettingModel.CsharpTemplate
+                : dbSettingModel.JavaTemplate;
 
             IDbObject dbObj = DbSetting.CreateDbObject(dbServer);
 
@@ -275,12 +286,34 @@ namespace AC.Tools.Controllers
                                         where columnInfo.IsPK
                                         select columnInfo).ToList();
 
+            //Service DTO 代码生成
+            IBuilderDTO serviceDTOBuilder = DTOBuilder.Create(codeGenerateConfig, lstColumns).GetDTOCode();
+            string serviceDTOCode = serviceDTOBuilder.GetServiceDTOCode();
+            
+
             //Service  代码生成
             IBuilderService serviceBuilder = ServiceBuilder.Create()
                 .SetGenerateConfig(codeGenerateConfig)
                 .SetKeys(lstKeys)
                 .GetServiceBuilder();
             string serviceCode = serviceBuilder.GetServiceCode();
+            
+            string serviceImplCode = string.Empty;
+            //生成ServiceImpl层代码
+            if (language == CodeLanguage.Java || codeGenerateConfig.CodeLayer == CodeLayer.ServiceLayerWithDomain ||
+                codeGenerateConfig.CodeLayer == CodeLayer.ServiceLayerWithoutDomain)
+            {
+                IBuilderServiceImpl builderServiceImpl =
+                    ServiceImplBuilder.Create(codeGenerateConfig, lstKeys).GetServiceImpl();
+                serviceImplCode = builderServiceImpl.GetServiceImplCode();
+            }
+            string domainCode = string.Empty;
+            //生成Domain层代码
+            if (language == CodeLanguage.Java || codeGenerateConfig.CodeLayer == CodeLayer.ServiceLayerWithDomain)
+            {
+                IBuilderDomain builderDomain = DomainBuilder.Create(codeGenerateConfig, lstKeys).GetDomain();
+                domainCode = builderDomain.GetDomainCode();
+            }
 
             //Dao 代码生成
             IBuilderDao daoBuilder = DaoBuilder.Create()
@@ -293,54 +326,82 @@ namespace AC.Tools.Controllers
                 .GetDaoBuilder();
             string daoCode = daoBuilder.GetDaoCode();
 
-            //Service DTO 代码生成
-            IBuilderDTO serviceDTOBuilder = DTOBuilder.Create(codeGenerateConfig, lstColumns).GetDTOCode();
-            string serviceDTOCode = serviceDTOBuilder.GetServiceDTOCode();
+            IBuilderMyBatisMapper myBatisBuilder = MyBatisMapperBuilder.Create()
+                .SetDbObj(dbObj)
+                .SetDbName(dbName)
+                .SetTableName(tableName)
+                .SetColFields(lstColumns)
+                .SetKeys(lstKeys)
+                .SetGenerateConfig(codeGenerateConfig)
+                .GetBulider();
+            string xmlBatis = myBatisBuilder.GetXml();
 
-            //如果是Service五层架构，则继续生成Domain和ServiceImpl层
-            if (codeGenerateConfig.CodeLayer == CodeLayer.ServiceLayerWithDomain)
+            if (language == CodeLanguage.Java)
             {
-                //生成Domain层代码
-                IBuilderDomain builderDomain = new BuilderDomain(lstKeys, codeGenerateConfig);
-                string domainCode = builderDomain.GetDomainCode();
-
-                //生成ServiceImpl层代码
-                IBuilderServiceImpl builderServiceImpl = new BuilderServiceImpl(lstKeys, codeGenerateConfig);
-                string serviceImplCode = builderServiceImpl.GetServiceImplCode();
-
                 return Json(new
-                                {
-                                    IsSuccess = true,
-                                    ServiceDTOCode = serviceDTOCode,
-                                    ServiceCode = serviceCode,
-                                    ServiceImplCode = serviceImplCode,
-                                    DomainCode = domainCode,
-                                    DaoCode = daoCode
-                                });
-            }
-            //如果是Service不带Domain层代码，只需要生成ServiceImpl层代码
-            if (codeGenerateConfig.CodeLayer == CodeLayer.ServiceLayerWithoutDomain)
-            {
-                IBuilderServiceImpl builderServiceImpl = new BuilderServiceImpl(lstKeys, codeGenerateConfig);
-                string serviceImplCode = builderServiceImpl.GetServiceImplCode();
-                return Json(new
-                                {
-                                    IsSuccess = true,
-                                    ServiceDTOCode = serviceDTOCode,
-                                    ServiceCode = serviceCode,
-                                    ServiceImplCode = serviceImplCode,
-                                    DaoCode = daoCode
-                                });
+                {
+                    IsSuccess = true,
+                    ServiceDTOCode = serviceDTOCode,
+                    ServiceCode = serviceCode,
+                    ServiceImplCode = serviceImplCode,
+                    DomainCode = domainCode,
+                    DaoCode = daoCode,
+                    MyBatis = xmlBatis,
+                });
             }
 
             return Json(new
-                            {
-                                IsSuccess = true,
-                                ServiceDTOCode = serviceDTOCode,
-                                ServiceCode = serviceCode,
-                                DaoCode = daoCode
-                            });
+            {
+                IsSuccess = true,
+                ServiceDTOCode = serviceDTOCode,
+                ServiceCode = serviceCode,
+                ServiceImplCode = serviceImplCode,
+                DomainCode = domainCode,
+                DaoCode = daoCode
+            });
         }
 
+    }
+
+    /// <summary>
+    /// 代码类
+    /// </summary>
+    public class CodeFileItem
+    {
+        /// <summary>
+        /// Id主要用来作为tab的ID
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// tab标签显示的文本
+        /// </summary>
+        public string TabText { get; set; }
+
+        /// <summary>
+        /// 代码
+        /// </summary>
+        public string Code { get; set; }
+    }
+
+    /// <summary>
+    /// 代码生成结果类
+    /// </summary>
+    public class CodeResult
+    {
+        private static readonly CodeResult empty = new CodeResult();
+        public static CodeResult Empty
+        {
+            get { return empty; }
+        }
+
+        public CodeResult()
+        {
+            Codes = new List<CodeFileItem>();
+        }
+
+        public CodeLanguage Language { get; set; }
+
+        public IList<CodeFileItem> Codes { get; set; }
     }
 }

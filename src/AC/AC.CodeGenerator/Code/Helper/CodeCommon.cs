@@ -13,6 +13,27 @@ namespace AC.Code.Helper
 	{
 	    private static readonly DataTypeHelper DataTypeHelper = DataTypeHelper.Create();
 
+	    public static string GetUpperChars(string text)
+	    {
+	        if (string.IsNullOrEmpty(text))
+	        {
+	            return string.Empty;
+	        }
+	        StringBuilder result = new StringBuilder();
+	        foreach (char c in text)
+	        {
+	            if (char.IsUpper(c))
+	            {
+	                result.Append(c);
+	            }
+	        }
+	        if (result.Length == 0)
+	        {
+	            result.Append(text[0]);
+	        }
+	        return result.ToString();
+	    }
+
 		#region Ëõ½ø¼ä¸ô
 
 		/// <summary>
@@ -611,6 +632,16 @@ namespace AC.Code.Helper
 			strclass.DelLastComma();
 			return strclass.Value;
 		}
+        public static string GetInParameterOfJava(List<ColumnInfo> keys)
+        {
+            var strclass = new StringPlus();
+            foreach (ColumnInfo key in keys)
+            {
+                strclass.Append(DbTypeToJava(key.TypeName) + " " + SetFirstCharacterLower(key.ColumnName) + ",");
+            }
+            strclass.DelLastComma();
+            return strclass.Value;
+        }
 
 		public static string SetFirstCharacterLower(string str)
 		{
